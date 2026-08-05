@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P9012001 - Documentação Técnica Completa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container { max-width: 1200px; margin: 0 auto; background: white; }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.1em; opacity: 0.9; }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 30px 20px;
+            background: #f9f9f9;
+            border-bottom: 2px solid #667eea;
+        }
+        .indicator {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        .indicator-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        .indicator-label {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 500;
+        }
+        .nav-wrapper {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+        .sidebar h3 {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #667eea;
+        }
+        .sidebar ul { list-style: none; }
+        .sidebar li {
+            margin: 8px 0;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .sidebar li:hover { background: #34495e; }
+        .sidebar li.active { background: #667eea; }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        h4 {
+            color: #555;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        p { margin-bottom: 12px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        table tr:hover { background: #f9f9f9; }
+        .search-box {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+            line-height: 1.4;
+        }
+        .collapsible {
+            background: #ecf0f1;
+            padding: 15px;
+            cursor: pointer;
+            border-left: 4px solid #667eea;
+            margin: 10px 0;
+            border-radius: 4px;
+            user-select: none;
+        }
+        .collapsible:hover { background: #dce6f0; }
+        .collapsible-content {
+            display: none;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #764ba2;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .collapsible-content.show { display: block; }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .flow-diagram {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            font-size: 0.9em;
+        }
+        .breadcrumb {
+            padding: 10px 20px;
+            background: #ecf0f1;
+            font-size: 0.9em;
+            border-bottom: 1px solid #ddd;
+        }
+        .breadcrumb a { color: #667eea; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .search-result {
+            display: none;
+            background: #fffacd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>P9012001 - Documentação Técnica Completa</h1>
+        <p>Programa de Alteração/Exclusão de Registros via ISN - SIAF/D9013142-13</p>
+    </header>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Pesquisar documentação..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        <div id="searchResults"></div>
+    </div>
+
+    <div class="nav-wrapper">
+        <div class="sidebar">
+            <h3>📑 Índice</h3>
+            <ul id="tableOfContents"></ul>
+        </div>
+
+        <div style="flex: 1;">
+            <div class="breadcrumb">
+                <strong>Localização:</strong> <a href="#" onclick="goToSection('executive-summary')">Início</a>
+                <span id="currentLocation"> > Resumo Executivo</span>
+            </div>
+
+            <div class="main-content">
+                <!-- SECTION 1: Executive Summary -->
+                <div id="executive-summary" class="section active">
+                    <h2>1. Resumo Executivo</h2>
+                    <p><strong>Programa:</strong> P9012001</p>
+                    <p><strong>Cliente:</strong> CHESF - Cia Hidro Elétrica do São Francisco</p>
+                    <p><strong>Sistema:</strong> S9013 - SIAF (Sistema de Informação de Aquisição e Fornecimento)</p>
+                    <p><strong>Objetivo:</strong> Alterar/Excluir registros via ISN em modo Batch do arquivo D9013142-13</p>
+                    <p><strong>Data de Criação:</strong> 21/03/2012</p>
+                    <p><strong>Última Manutenção:</strong> 08/05/2012 (Documento SMP-0405/2012)</p>
+
+                    <h3>Propósito de Negócio</h3>
+                    <p>Este programa permite alterar ou excluir registros do arquivo de simulações de cobrança (D9013142-13) usando o ISN (Internal Sequence Number) como identificador. Suporta modo simulação (dry-run) e modo efetivo, permitindo ao usuário validar as operações antes de confirmar.</p>
+
+                    <h3>Audiência</h3>
+                    <p>Analistas de sistemas, auditores, equipes de modernização e gestores de operações de processamento em batch.</p>
+
+                    <h3>Resultado da Análise</h3>
+                    <p>Programa identificado como <strong>baixa complexidade técnica</strong>, mas <strong>complexidade média de modernização</strong> devido às dependências não disponíveis. Candidato a refatoração com separação de lógica de validação de acesso a dados.</p>
+
+                    <div class="warning">
+                        <strong>⚠️ Aviso Operacional (do código-fonte):</strong> Antes de iniciar um novo procedimento de manutenção, verificar com o coordenador se este objeto já está no ambiente de produção.
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Technical Summary -->
+                <div id="technical-summary" class="section">
+                    <h2>2. Resumo Técnico</h2>
+
+                    <h3>Tipo de Programa</h3>
+                    <p>Natural Structured Programming (NSP) - Batch com suporte a modo interativo</p>
+
+                    <h3>Plataforma</h3>
+                    <p>Natural/Adabas</p>
+
+                    <h3>Linguagem</h3>
+                    <p>Natural (Adabas Database Programming Language)</p>
+
+                    <h3>Modo de Execução</h3>
+                    <p>Batch (TERMINATE 133 em caso de erro) / Interativo (STOP em caso de erro)</p>
+
+                    <h3>Métricas de Código</h3>
+                    <table>
+                        <tr><th>Métrica</th><th>Valor</th></tr>
+                        <tr><td>Linhas analisadas</td><td>261</td></tr>
+                        <tr><td>Linhas lógicas</td><td>~180</td></tr>
+                        <tr><td>Comentários</td><td>~40 linhas</td></tr>
+                        <tr><td>Seções principais</td><td>5 (Define, Input, Validação, Processamento, Subroutine)</td></tr>
+                        <tr><td>Profundidade de aninhamento máxima</td><td>3 níveis</td></tr>
+                    </table>
+
+                    <h3>Estrutura Principal</h3>
+                    <div class="flow-diagram">DEFINE DATA
+  ├── LOCAL USING (3 LDAs)
+  ├── LOCAL (variáveis locais)
+  │   ├── WAX-* (variáveis auxiliares)
+  │   ├── WFL-* (variáveis lógicas)
+  │   └── WTL-* (variáveis de formulário)
+  │
+INPUT (15 parâmetros)
+  ├── NUMERO-SMP
+  ├── FUNCAO (ALTERAR|EXCLUIR)
+  ├── NUMERO-ISN
+  ├── EFETIVA (SIM|NAO)
+  └── 11 parâmetros de simulação/cobrança
+  │
+VALIDAÇÃO (decide for every condition)
+  ├── Validações de parâmetro obrigatório
+  ├── Validações de formato
+  ├── Validação via CALLNAT N9013Q06
+  └── Acumulação de erros em WFL-TEM-ERRO
+  │
+PROCESSAMENTO
+  ├── GET D142-13-CADS-SIMU by ISN
+  ├── WRITE(1) forma "antes"
+  ├── Decide on FUNCAO
+  │   ├── EXCLUIR: DELETE
+  │   └── ALTERAR: MOVE-CAMPOS-NAO-NULL + UPDATE
+  ├── Decide on EFETIVA
+  │   ├── SIM: END TRANSACTION
+  │   └── NAO: BACKOUT TRANSACTION
+  ├── NEWPAGE(1)
+  └── WRITE(1) forma "depois"
+  │
+SUBROUTINE MOVE-CAMPOS-NAO-NULL
+  └── Atualização condicional de campos não NULL
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Program Flow -->
+                <div id="program-flow" class="section">
+                    <h2>3. Fluxo de Execução</h2>
+
+                    <h3>Fluxograma Principal</h3>
+                    <div class="flow-diagram">INÍCIO
+  │
+  ├─► [1] DEFINE DATA
+  │   └─► Inicializar estruturas, LDAs, variáveis locais
+  │
+  ├─► [2] RECEBER ENTRADA
+  │   └─► 15 parâmetros (obrigatórios e opcionais)
+  │
+  ├─► [3] VALIDAR ENTRADA (decide for every condition)
+  │   ├─► NUMERO-SMP vazio? → Erro
+  │   ├─► FUNCAO não em {ALTERAR, EXCLUIR}? → Erro
+  │   ├─► NUMERO-ISN = 0? → Erro
+  │   ├─► EFETIVA não em {SIM, NAO}? → Erro
+  │   ├─► Se L001-CODG-TIPO-DOCM-SIMU ≠ 'NULL':
+  │   │   └─► Validar se em {00, 02, 04}
+  │   ├─► Se L001-CODG-CATG-DOCM-SIMU ≠ 'NULL':
+  │   │   └─► Validar se em {B, R}
+  │   ├─► Se L001-NUMR-CONT-MATL ≠ 'NULL':
+  │   │   └─► Validar se numérico (10 dígitos)
+  │   ├─► Se L001-NUMR-CNPJ-FORN-MATL ≠ 'NULL':
+  │   │   └─► Validar se numérico (14 dígitos)
+  │   ├─► Se L001-NUMR-PARC-MATL ≠ 'NULL':
+  │   │   └─► Validar se numérico (3 dígitos)
+  │   ├─► Se L001-VALR-DOCM-SIMU ≠ 'NULL':
+  │   │   └─► Validar se numérico (tratar vírgula e espaços)
+  │   ├─► Se L001-INDC-SITC-SIMU ≠ 'NULL':
+  │   │   └─► CALLNAT N9013Q06 para validar código de status
+  │   ├─► Se L001-CODG-TIPO-DOCM-COBR ≠ 'NULL':
+  │   │   └─► Validar se em {00, 02, 04}
+  │   ├─► Se L001-NUMR-DOCM-COBR ≠ 'NULL':
+  │   │   └─► Validar se numérico (9 dígitos) [CAMPO AJUSTADO EM 08/05/2012]
+  │   ├─► Se L001-DATA-DOCM-COBR não vazio/00000000:
+  │   │   └─► Validar se formato YYYYMMDD
+  │   ├─► Se L001-VALR-DOCM-COBR ≠ 'NULL':
+  │   │   └─► Validar se numérico (tratar vírgula e espaços)
+  │   └─► Se L001-INDC-VISA-IC1 ≠ 'NULL':
+  │       └─► Validar se em {00..19}
+  │
+  ├─► [4] VALIDAÇÃO ENCONTROU ERROS?
+  │   ├─► SIM: Imprimir erros, STOP (interativo) ou TERMINATE 133 (batch)
+  │   └─► NÃO: Continuar
+  │
+  ├─► [5] INICIALIZAR VARIÁVEIS DE TRABALHO
+  │   ├─► WTL-IDNF-FILE := 'D9013142-13'
+  │   ├─► WTL-STTS-REGS := 'ANTES'
+  │   └─► WTL-USER-RESP := *USER
+  │
+  ├─► [6] LEITURA E IMPRESSÃO DE ANTES
+  │   ├─► GET D142-13-CADS-SIMU by NUMERO-ISN
+  │   └─► WRITE(1) USING FORM R9012001 (imagem antes)
+  │
+  ├─► [7] PROCESSAR FUNCAO (decide on first value)
+  │   ├─► EXCLUIR:
+  │   │   └─► DELETE (G1.)
+  │   ├─► ALTERAR:
+  │   │   ├─► MOVE-CAMPOS-NAO-NULL (subroutine)
+  │   │   └─► UPDATE (G1.)
+  │   └─► Aplicar TRANSACAO
+  │       ├─► Se EFETIVA = SIM:
+  │       │   └─► END TRANSACTION (confirma)
+  │       └─► Se EFETIVA = NAO:
+  │           └─► BACKOUT TRANSACTION (desfaz)
+  │
+  ├─► [8] PÓS-PROCESSAMENTO
+  │   ├─► WTL-STTS-REGS := 'APOS'
+  │   ├─► Se FUNCAO = EXCLUIR:
+  │   │   └─► RESET D142-13-CADS-SIMU (limpar buffer)
+  │   ├─► NEWPAGE(1)
+  │   └─► WRITE(1) USING FORM R9012001 (imagem depois)
+  │
+  └─► [9] FIM
+
+SUBROUTINE MOVE-CAMPOS-NAO-NULL (linhas 2270-2580)
+  └─► Para cada campo L001-*:
+      ├─► Se conteúdo ≠ 'NULL':
+      │   └─► D142-13-CADS-SIMU.campo := val(L001-campo)
+      └─► Senão: ignorar
+                    </div>
+
+                    <h3>Pontos Críticos do Fluxo</h3>
+                    <ul>
+                        <li><strong>Validação acumulativa:</strong> Todos os erros são acumulados em WFL-TEM-ERRO antes de encerrar, não apenas o primeiro erro.</li>
+                        <li><strong>Padrão NULL para campos opcionais:</strong> Campos são validados e processados apenas se forem diferentes da string literal 'NULL'.</li>
+                        <li><strong>Modo simulação (EFETIVA):</strong> EFETIVA = 'NAO' executa um BACKOUT TRANSACTION, permitindo visualizar mudanças sem confirmá-las.</li>
+                        <li><strong>CALLNAT para validação externa:</strong> L001-INDC-SITC-SIMU requer validação externa via N9013Q06, programa não disponível.</li>
+                        <li><strong>Transação implícita:</strong> GET inicia transação; END TRANSACTION ou BACKOUT TRANSACTION a encerram.</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 4: Object Inventory -->
+                <div id="object-inventory" class="section">
+                    <h2>4. Inventário de Objetos</h2>
+
+                    <h3>Objetos Locais (LOCAL USING)</h3>
+                    <table>
+                        <tr><th>Objeto</th><th>Tipo</th><th>Descrição</th><th>Status</th></tr>
+                        <tr><td>L9012001</td><td>LDA</td><td>Área de dados local para P9012001</td><td>❌ Não disponível</td></tr>
+                        <tr><td>A9013Q06</td><td>LDA</td><td>Área de dados para interface N9013Q06</td><td>❌ Não disponível</td></tr>
+                        <tr><td>L9013Q13</td><td>LDA</td><td>Área de dados local para suporte</td><td>❌ Não disponível</td></tr>
+                    </table>
+
+                    <h3>Variáveis Locais</h3>
+                    <table>
+                        <tr><th>Nome</th><th>Tipo</th><th>Comprimento</th><th>Propósito</th></tr>
+                        <tr><td>WAX-VALR-INTR</td><td>Numérico</td><td>N0020</td><td>Conversão de valores inteiros (auxiliar)</td></tr>
+                        <tr><td>WAX-VALR-DECM</td><td>Numérico com decimais</td><td>N20,7</td><td>Conversão de valores decimais (auxiliar)</td></tr>
+                        <tr><td>WAX-VALR-EDIT</td><td>Alfanumérico</td><td>A0018</td><td>Edição de valores para validação numérica</td></tr>
+                        <tr><td>WFL-TEM-ERRO</td><td>Lógico</td><td>L</td><td>Flag de erro acumulado (INIT FALSE)</td></tr>
+                        <tr><td>WTL-IDNF-FILE</td><td>Alfanumérico</td><td>A0020</td><td>Identificador do arquivo: 'D9013142-13'</td></tr>
+                        <tr><td>WTL-STTS-REGS</td><td>Alfanumérico</td><td>A0005</td><td>Status do registro: 'ANTES' ou 'APOS'</td></tr>
+                        <tr><td>WTL-USER-RESP</td><td>Alfanumérico</td><td>A0010</td><td>Usuário responsável (*USER)</td></tr>
+                    </table>
+
+                    <h3>Parâmetros de Entrada</h3>
+                    <table>
+                        <tr><th>Parâmetro</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr>
+                        <tr><td>NUMERO-SMP</td><td>A</td><td>✅</td><td>Número do documento SMP de autorização</td></tr>
+                        <tr><td>FUNCAO</td><td>A</td><td>✅</td><td>ALTERAR ou EXCLUIR</td></tr>
+                        <tr><td>NUMERO-ISN</td><td>N</td><td>✅</td><td>ISN do registro a alterar/excluir</td></tr>
+                        <tr><td>EFETIVA</td><td>A</td><td>✅</td><td>SIM (confirma) ou NAO (simulação)</td></tr>
+                        <tr><td>L001-CODG-TIPO-DOCM-SIMU</td><td>N0002</td><td>❌</td><td>Código tipo documento simulação (NULL = omitir)</td></tr>
+                        <tr><td>L001-CODG-CATG-DOCM-SIMU</td><td>A0001</td><td>❌</td><td>Categoria documento simulação</td></tr>
+                        <tr><td>L001-NUMR-CONT-MATL</td><td>N0010</td><td>❌</td><td>Número contrato material (10 dígitos)</td></tr>
+                        <tr><td>L001-NUMR-CNPJ-FORN-MATL</td><td>N0014</td><td>❌</td><td>CNPJ fornecedor (14 dígitos)</td></tr>
+                        <tr><td>L001-NUMR-PARC-MATL</td><td>N0003</td><td>❌</td><td>Número parcela (3 dígitos)</td></tr>
+                        <tr><td>L001-VALR-DOCM-SIMU</td><td>N15,2</td><td>❌</td><td>Valor documento simulação</td></tr>
+                        <tr><td>L001-INDC-SITC-SIMU</td><td>A0002</td><td>❌</td><td>Indicador situação simulação (validado via N9013Q06)</td></tr>
+                        <tr><td>L001-CODG-TIPO-DOCM-COBR</td><td>N0002</td><td>❌</td><td>Código tipo documento cobrança</td></tr>
+                        <tr><td>L001-NUMR-DOCM-COBR</td><td>N0009</td><td>❌</td><td>Número documento cobrança (9 dígitos) [AJUSTADO 08/05/2012]</td></tr>
+                        <tr><td>L001-DATA-DOCM-COBR</td><td>N0008</td><td>❌</td><td>Data documento cobrança (YYYYMMDD)</td></tr>
+                        <tr><td>L001-VALR-DOCM-COBR</td><td>N15,2</td><td>❌</td><td>Valor documento cobrança</td></tr>
+                        <tr><td>L001-INDC-VISA-IC1</td><td>A0002</td><td>❌</td><td>Indicador visto IC1 (00..19)</td></tr>
+                    </table>
+
+                    <h3>Estruturas Adabas</h3>
+                    <table>
+                        <tr><th>Objeto</th><th>Tipo</th><th>Descrição</th><th>Status</th></tr>
+                        <tr><td>D9013142-13</td><td>Arquivo Adabas</td><td>Arquivo de simulações de cobrança SIAF</td><td>❌ Definição não disponível</td></tr>
+                        <tr><td>D142-13-CADS-SIMU</td><td>View/DDM</td><td>View padrão do arquivo D9013142-13</td><td>❌ Definição não disponível</td></tr>
+                    </table>
+
+                    <h3>Subroutines Internas</h3>
+                    <table>
+                        <tr><th>Nome</th><th>Linhas</th><th>Descrição</th></tr>
+                        <tr><td>MOVE-CAMPOS-NAO-NULL</td><td>2270-2580</td><td>Move apenas campos não-NULL para registros Adabas</td></tr>
+                    </table>
+
+                    <h3>Formulários de Relatório</h3>
+                    <table>
+                        <tr><th>Formulário</th><th>Uso</th><th>Status</th></tr>
+                        <tr><td>R9012001</td><td>Imagem ANTES e DEPOIS do registro</td><td>❌ Não disponível</td></tr>
+                    </table>
+
+                    <h3>Programas Chamados (CALLNAT)</h3>
+                    <table>
+                        <tr><th>Programa</th><th>Linha</th><th>Propósito</th><th>Status</th></tr>
+                        <tr><td>N9013Q06</td><td>1360</td><td>Validar código de situação (L001-INDC-SITC-SIMU)</td><td>❌ Não disponível</td></tr>
+                    </table>
+
+                    <h3>Resumo de Objetos</h3>
+                    <ul>
+                        <li>✅ <strong>Disponíveis:</strong> P9012001 (o próprio programa)</li>
+                        <li>❌ <strong>Não disponíveis:</strong> 3 LDAs, 1 arquivo Adabas, 1 view, 1 programa chamado, 1 formulário, 1 data definition</li>
+                        <li><strong>Total de objetos referenciados:</strong> 9</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 5: Dependencies -->
+                <div id="dependencies" class="section">
+                    <h2>5. Mapa de Dependências</h2>
+
+                    <h3>Dependências Externas Diretas</h3>
+                    <div class="flow-diagram">P9012001
+├── LOCAL USING L9012001 ........................ ❌ LDA (não disponível)
+├── LOCAL USING A9013Q06 ........................ ❌ LDA (não disponível)
+├── LOCAL USING L9013Q13 ........................ ❌ LDA (não disponível)
+│
+├── GET/UPDATE/DELETE D142-13-CADS-SIMU ........ ❌ View/DDM (não disponível)
+│   └── Arquivo: D9013142-13 ................... ❌ Definição não disponível
+│
+├── CALLNAT 'N9013Q06' .......................... ❌ Programa (não disponível)
+│   └── Interface: NQ06-LIST-PARM (via LDA A9013Q06)
+│
+└── FORM 'R9012001' ............................ ❌ Relatório (não disponível)
+    └── Usado em WRITE(1) para imagens ANTES/DEPOIS
+                    </div>
+
+                    <h3>Dependências Inversas (Programs que usam D9013142-13)</h3>
+                    <div class="warning">
+                        <strong>❌ Não determinável:</strong> O repositório contém apenas P9012001. Outras versões ou programas que acessam D9013142-13 não estão disponíveis para análise.
+                    </div>
+
+                    <h3>Análise de Impacto de Dependências Ausentes</h3>
+                    <table>
+                        <tr><th>Dependência</th><th>Impacto na Análise</th><th>Seções Afetadas</th></tr>
+                        <tr><td>L9012001</td><td>Não é possível confirmar todos os campos da estrutura de entrada; nomes e tipos de campo estão inferidos dos comentários do código</td><td>Inventário de Objetos, Regras de Negócio, Matriz CRUD</td></tr>
+                        <tr><td>A9013Q06</td><td>Não é possível confirmar a interface com N9013Q06; estrutura de retorno (NQ06-CODG-RETN) é assumida ser um code de retorno numérico</td><td>Fluxo de Execução, Regras de Validação</td></tr>
+                        <tr><td>L9013Q13</td><td>Objetivo desconhecido; presumivelmente suporte geral</td><td>Inventário de Objetos</td></tr>
+                        <tr><td>N9013Q06</td><td>Não é possível validar que a chamada está correta ou entender exceções/códigos de erro alternativos</td><td>Regras de Negócio (validação L001-INDC-SITC-SIMU), Análise de Risco</td></tr>
+                        <tr><td>D142-13-CADS-SIMU / D9013142-13</td><td>Não é possível confirmar campos, tipos, constraints, índices, ou regras de integridade do arquivo; nomes de campo estão inferidos do código-fonte</td><td>Matriz CRUD, Inventário de Objetos, Análise de Performance</td></tr>
+                        <tr><td>R9012001</td><td>Não é possível confirmar formato de saída, campos impressos ou restrições de layout</td><td>Saída do Programa, Análise de Performance</td></tr>
+                    </table>
+
+                    <h3>Dependências de Runtime</h3>
+                    <ul>
+                        <li><strong>Adabas Database:</strong> Necessário para operações GET, UPDATE, DELETE no arquivo D9013142-13</li>
+                        <li><strong>Natural Batch Environment:</strong> Para execução em modo batch (verificado via *DEVICE)</li>
+                        <li><strong>Report Printer/Formatter:</strong> Para WRITE(1) USING FORM</li>
+                        <li><strong>User/Authorization System:</strong> Para *USER e contexto de segurança</li>
+                    </ul>
+
+                    <h3>Diagrama de Fluxo de Dados</h3>
+                    <div class="flow-diagram">INPUT (15 parâmetros)
+  │
+  ├─► Validação local ........... Acesso: L9012001 (inferido do código)
+  │
+  ├─► Validação externa ........ CALLNAT N9013Q06 (usa A9013Q06)
+  │
+  ├─► Acesso Adabas
+  │   ├─► GET D142-13-CADS-SIMU by ISN .... Leitura do registro
+  │   ├─► UPDATE (G1.) ..................... Atualização condicional
+  │   ├─► DELETE (G1.) ..................... Deleção total
+  │   └─► TRANSACTION ...................... Controle ACID
+  │
+  ├─► Impressão de Formulário ... FORM R9012001 (ANTES/DEPOIS)
+  │
+  └─► Saída ..................... Batch ou Interactive (dependendo de *DEVICE)
+                    </div>
+
+                    <h3>Suposições Críticas (baseadas em código ausente)</h3>
+                    <ul>
+                        <li>L9012001 define os campos L001-* como mostrado nos INPUTs</li>
+                        <li>A9013Q06 define NQ06-LIST-PARM, NQ06-CODG-SITC, NQ06-CODG-RETN</li>
+                        <li>N9013Q06 retorna 0 em NQ06-CODG-RETN se válido, qualquer outro valor se inválido</li>
+                        <li>D142-13-CADS-SIMU contém os campos atualizados em MOVE-CAMPOS-NAO-NULL</li>
+                        <li>R9012001 sabe como formatar D142-13-CADS-SIMU</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 6: Call Graph -->
+                <div id="call-graph" class="section">
+                    <h2>6. Grafo de Chamadas</h2>
+
+                    <h3>Visão Geral</h3>
+                    <div class="flow-diagram">P9012001
+├── Entrada
+│   └── 15 parâmetros INPUT
+│
+├── Processamento
+│   ├── Validação local
+│   │   └── DECIDE FOR EVERY CONDITION (inline)
+│   │
+│   ├── Chamadas Externas
+│   │   └── CALLNAT 'N9013Q06'
+│   │       └── L001-INDC-SITC-SIMU (L001-* definido em A9013Q06)
+│   │
+│   ├── Operações Adabas
+│   │   ├── GET D142-13-CADS-SIMU (linha 1920)
+│   │   ├── UPDATE (G1.) (linha 2000)
+│   │   ├── DELETE (G1.) (linha 1970)
+│   │   ├── END TRANSACTION (linha 2030)
+│   │   └── BACKOUT TRANSACTION (linha 2050)
+│   │
+│   ├── Subroutine Interna
+│   │   └── PERFORM MOVE-CAMPOS-NAO-NULL (linha 1990)
+│   │       └── Série de DECIDE FOR EVERY CONDITION (2290-2560)
+│   │
+│   ├── Saída
+│   │   ├── WRITE(1) USING FORM R9012001 (linha 1930 - ANTES)
+│   │   ├── WRITE(1) USING FORM R9012001 (linha 2200 - DEPOIS)
+│   │   └── NEWPAGE(1) (linha 2190)
+│   │
+│   └── Tratamento de Erro
+│       ├── WRITE (mensagens de erro)
+│       ├── STOP (se interativo)
+│       └── TERMINATE 133 (se batch)
+│
+└── Saída
+    └── Relatório FORM R9012001
+
+Legenda:
+  ✅ Verde: Disponível no repositório
+  ❌ Vermelho: Não disponível no repositório
+                    </div>
+
+                    <h3>Profundidade de Chamadas</h3>
+                    <table>
+                        <tr><th>Nível</th><th>Elemento</th><th>Tipo</th><th>Disponível</th></tr>
+                        <tr><td>0</td><td>P9012001</td><td>Programa</td><td>✅</td></tr>
+                        <tr><td>1</td><td>N9013Q06</td><td>CALLNAT</td><td>❌</td></tr>
+                        <tr><td>1</td><td>R9012001</td><td>FORM</td><td>❌</td></tr>
+                        <tr><td>1</td><td>MOVE-CAMPOS-NAO-NULL</td><td>SUBROUTINE</td><td>✅</td></tr>
+                    </table>
+
+                    <h3>Chamadas Externas</h3>
+                    <div class="collapsible">
+                        <strong>+</strong> CALLNAT 'N9013Q06' (linha 1360)
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Condição de chamada:</strong> Quando L001-INDC-SITC-SIMU ≠ 'NULL'</p>
+                        <p><strong>Parametrização:</strong></p>
+                        <div class="code-block">NQ06-CODG-SITC := L001-INDC-SITC-SIMU
+CALLNAT 'N9013Q06' NQ06-LIST-PARM
+IF NQ06-CODG-RETN ≠ 0
+  WRITE 'Erro! Parametro L001-INDC-SITC-SIMU nao cadastrado'
+  MOVE TRUE TO WFL-TEM-ERRO
+END-IF                        <p><strong>Retorno esperado:</strong> NQ06-CODG-RETN = 0 se válido</p>
+                    </div>
+                </div>
+
+                <!-- SECTION 7: CRUD Matrix -->
+                <div id="crud-matrix" class="section">
+                    <h2>7. Matriz CRUD</h2>
+                    <table>
+                        <tr>
+                            <th>Arquivo/View</th>
+                            <th>C (Create)</th>
+                            <th>R (Read)</th>
+                            <th>U (Update)</th>
+                            <th>D (Delete)</th>
+                            <th>T (Transaction)</th>
+                        </tr>
+                        <tr>
+                            <td><strong>D9013142-13 / D142-13-CADS-SIMU</strong></td>
+                            <td>❌</td>
+                            <td>✅ GET by ISN (1920)</td>
+                            <td>✅ UPDATE (2000) [condicionado]</td>
+                            <td>✅ DELETE (1970) [condicionado]</td>
+                            <td>✅ END / BACKOUT (2030-2050)</td>
+                        </tr>
+                    </table>
+
+                    <h3>Detalhes por Operação</h3>
+                    <h4>READ: GET D142-13-CADS-SIMU by ISN (linha 1920)</h4>
+                    <ul>
+                        <li><strong>Descritor:</strong> ISN (Internal Sequence Number)</li>
+                        <li><strong>Critério:</strong> NUMERO-ISN (parâmetro de entrada)</li>
+                        <li><strong>Label:</strong> G1 (referência da transação)</li>
+                        <li><strong>Propósito:</strong> Ler registro antes da alteração/exclusão</li>
+                        <li><strong>Modo transação:</strong> Inicia transação implícita</li>
+                    </ul>
+
+                    <h4>UPDATE: UPDATE (G1.) (linha 2000)</h4>
+                    <ul>
+                        <li><strong>Condição:</strong> FUNCAO = 'ALTERAR'</li>
+                        <li><strong>Campos atualizados:</strong> Todos não-NULL em MOVE-CAMPOS-NAO-NULL</li>
+                        <li><strong>Label:</strong> G1 (registro GET anterior)</li>
+                        <li><strong>Propósito:</strong> Persistir alterações de campos opcionais</li>
+                        <li><strong>Modo transação:</strong> Operação em transação aberta (confirmada por END TRANSACTION)</li>
+                    </ul>
+
+                    <h4>DELETE: DELETE (G1.) (linha 1970)</h4>
+                    <ul>
+                        <li><strong>Condição:</strong> FUNCAO = 'EXCLUIR'</li>
+                        <li><strong>Label:</strong> G1 (registro GET anterior)</li>
+                        <li><strong>Propósito:</strong> Remover registro inteiro</li>
+                        <li><strong>Modo transação:</strong> Operação em transação aberta (confirmada por END TRANSACTION)</li>
+                    </ul>
+
+                    <h4>TRANSACTION: END TRANSACTION / BACKOUT TRANSACTION (linhas 2030/2050)</h4>
+                    <ul>
+                        <li><strong>Condição END:</strong> EFETIVA = 'SIM'</li>
+                        <li><strong>Condição BACKOUT:</strong> EFETIVA = 'NAO'</li>
+                        <li><strong>Propósito:</strong> Confirmar (SIM) ou descartar (NAO - simulação) alterações</li>
+                        <li><strong>Comportamento:</strong> Modo simulação permite visualizar antes de confirmar</li>
+                    </ul>
+
+                    <h3>Resumo de Operações por Cenário</h3>
+                    <table>
+                        <tr><th>Cenário</th><th>FUNCAO</th><th>EFETIVA</th><th>Operações Adabas</th><th>Resultado</th></tr>
+                        <tr><td>Alterar e confirmar</td><td>ALTERAR</td><td>SIM</td><td>GET → UPDATE → END TRANSACTION</td><td>✅ Alteração persistida</td></tr>
+                        <tr><td>Alterar e simular</td><td>ALTERAR</td><td>NAO</td><td>GET → UPDATE → BACKOUT TRANSACTION</td><td>⏸️ Alteração descarted</td></tr>
+                        <tr><td>Excluir e confirmar</td><td>EXCLUIR</td><td>SIM</td><td>GET → DELETE → END TRANSACTION</td><td>✅ Exclusão persistida</td></tr>
+                        <tr><td>Excluir e simular</td><td>EXCLUIR</td><td>NAO</td><td>GET → DELETE → BACKOUT TRANSACTION</td><td>⏸️ Exclusão descarted</td></tr>
+                    </table>
+                </div>
+
+                <!-- SECTION 8: Impact Map -->
+                <div id="impact-map" class="section">
+                    <h2>8. Mapa de Impacto (Dependências Inversas)</h2>
+
+                    <div class="warning">
+                        <strong>❌ Análise Parcial:</strong> O repositório contém apenas P9012001. Não é possível determinar quais programas chamam P9012001 ou acessam D9013142-13 diretamente. Abaixo está a análise do que P9012001 impacta.
+                    </div>
+
+                    <h3>Programas que Dependem de P9012001</h3>
+                    <p><em>Não determinável: repositório contém apenas P9012001.</em></p>
+
+                    <h3>Programas que Acessam D9013142-13</h3>
+                    <p><em>Não determinável: repositório contém apenas P9012001.</em></p>
+
+                    <h3>Impacto de P9012001 em Sistemas Downstream</h3>
+                    <table>
+                        <tr><th>Dependência</th><th>Tipo de Impacto</th><th>Nível de Crítica</th><th>Comentários</th></tr>
+                        <tr><td>D9013142-13 (arquivo Adabas)</td><td>Leitura, Atualização, Deleção</td><td>🔴 Alta</td><td>Alterações/exclusões por P9012001 podem afetar programas que leem este arquivo</td></tr>
+                        <tr><td>N9013Q06 (validação)</td><td>Chamada condicional</td><td>🟡 Média</td><td>Indisponibilidade causa falha de validação; campo L001-INDC-SITC-SIMU não pode ser validado</td></tr>
+                        <tr><td>R9012001 (relatório)</td><td>Saída formatada</td><td>🟡 Média</td><td>Indisponibilidade impede impressão ANTES/DEPOIS</td></tr>
+                        <tr><td>L9012001, A9013Q06, L9013Q13 (LDAs)</td><td>Estruturas de dados</td><td>🟡 Média</td><td>Indisponibilidade afeta definição de parâmetros</td></tr>
+                    </table>
+
+                    <h3>Cenários de Falha e Impactos</h3>
+                    <ul>
+                        <li><strong>N9013Q06 indisponível:</strong> Campo L001-INDC-SITC-SIMU não é validado corretamente; risco de dados inválidos no banco</li>
+                        <li><strong>R9012001 indisponível:</strong> Imagens ANTES/DEPOIS não são impressas; auditoria prejudicada</li>
+                        <li><strong>D9013142-13 indisponível:</strong> P9012001 não consegue executar; batch interrompido com erro</li>
+                        <li><strong>L9012001 indisponível:</strong> Estrutura de parâmetros não está clara; risco de interpretação incorreta</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 9: Business Rules -->
+                <div id="business-rules" class="section">
+                    <h2>9. Regras de Negócio</h2>
+
+                    <h3>Validação de Entrada</h3>
+                    <table>
+                        <tr><th>#</th><th>Regra</th><th>Campo</th><th>Fonte (linhas)</th><th>Ação em Falha</th></tr>
+                        <tr><td>BR-001</td><td>SMP é obrigatório e não vazio</td><td>NUMERO-SMP</td><td>0880-0900</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-002</td><td>FUNCAO deve ser ALTERAR ou EXCLUIR</td><td>FUNCAO</td><td>0910-0930</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-003</td><td>ISN é obrigatório e > 0</td><td>NUMERO-ISN</td><td>0940-0960</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-004</td><td>EFETIVA deve ser SIM ou NAO</td><td>EFETIVA</td><td>0970-0990</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-005</td><td>Se informado, tipo documento simu ∈ {00, 02, 04}</td><td>L001-CODG-TIPO-DOCM-SIMU</td><td>1000-1040</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-006</td><td>Se informado, categoria documento ∈ {B, R}</td><td>L001-CODG-CATG-DOCM-SIMU</td><td>1050-1090</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-007</td><td>Se informado, contrato é numérico 10 dígitos</td><td>L001-NUMR-CONT-MATL</td><td>1100-1140</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-008</td><td>Se informado, CNPJ é numérico 14 dígitos</td><td>L001-NUMR-CNPJ-FORN-MATL</td><td>1150-1190</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-009</td><td>Se informado, parcela é numérica 3 dígitos</td><td>L001-NUMR-PARC-MATL</td><td>1200-1240</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-010</td><td>Se informado, valor simulação é numérico (tratar vírgula)</td><td>L001-VALR-DOCM-SIMU</td><td>1250-1330</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-011</td><td>Se informado, situação é validada por N9013Q06</td><td>L001-INDC-SITC-SIMU</td><td>1340-1400</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-012</td><td>Se informado, tipo documento cobr ∈ {00, 02, 04}</td><td>L001-CODG-TIPO-DOCM-COBR</td><td>1410-1450</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-013</td><td>Se informado, número documento é numérico 9 dígitos</td><td>L001-NUMR-DOCM-COBR</td><td>1460-1500</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-014</td><td>Se informado, data é formato YYYYMMDD</td><td>L001-DATA-DOCM-COBR</td><td>1510-1560</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-015</td><td>Se informado, valor cobrança é numérico (tratar vírgula)</td><td>L001-VALR-DOCM-COBR</td><td>1570-1640</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                        <tr><td>BR-016</td><td>Se informado, indicador visto ∈ {00..19}</td><td>L001-INDC-VISA-IC1</td><td>1650-1690</td><td>Erro + STOP/TERMINATE 133</td></tr>
+                    </table>
+
+                    <h3>Regras de Processamento</h3>
+                    <ul>
+                        <li><strong>BR-017 (Padrão NULL):</strong> Campos com valor 'NULL' são ignorados durante validação e atualização (linhas 1000+)</li>
+                        <li><strong>BR-018 (Acumulação de Erros):</strong> Todos os erros de validação são acumulados em WFL-TEM-ERRO antes de parar; não há early exit (decide for every condition, 0870-1720)</li>
+                        <li><strong>BR-019 (Impressão ANTES):</strong> Antes de qualquer alteração/exclusão, o registro é impresso (forma R9012001, linha 1930)</li>
+                        <li><strong>BR-020 (Impressão DEPOIS):</strong> Após alteração/exclusão (real ou simulada), o registro é impresso novamente (forma R9012001, linha 2200)</li>
+                        <li><strong>BR-021 (Simulação de Alteração):</strong> Se EFETIVA = 'NAO', atualização é desfeita com BACKOUT TRANSACTION (linha 2050)</li>
+                        <li><strong>BR-022 (Simulação de Exclusão):</strong> Se EFETIVA = 'NAO', deleção é desfeita com BACKOUT TRANSACTION (linha 2050)</li>
+                        <li><strong>BR-023 (Confirmação de Alteração):</strong> Se EFETIVA = 'SIM', atualização é confirmada com END TRANSACTION (linha 2030)</li>
+                        <tr><td>BR-024 (Confirmação de Exclusão):</td><td>Se EFETIVA = 'SIM', deleção é confirmada com END TRANSACTION (linha 2030)</td></tr>
+                        <li><strong>BR-025 (Reset Pós-Exclusão):</strong> Se FUNCAO = 'EXCLUIR', buffer é limpo com RESET (linha 2160)</li>
+                        <li><strong>BR-026 (Atualização Condicional):</strong> Campos são movidos para o registro Adabas apenas se ≠ 'NULL' (MOVE-CAMPOS-NAO-NULL, linhas 2270-2580)</li>
+                        <li><strong>BR-027 (Contexto de Usuário):</strong> Usuário responsável é capturado via *USER (linha 1880)</li>
+                    </ul>
+
+                    <h3>Manutenção Registrada</h3>
+                    <p><strong>Documento SMP-0405/2012 (08/05/2012):</strong> Campo L001-NUMR-DOCM-COBR foi aumentado de N8 para N9, refletido em BR-013 acima.</p>
+
+                    <h3>Impacto de Regras de Negócio</h3>
+                    <ul>
+                        <li>Validação acumulativa (BR-018) garante que usuário vê todas as falhas de uma vez, não iterativamente</li>
+                        <li>Padrão NULL (BR-017) permite campos opcionais verdadeiros, reduzindo parametrização obrigatória</li>
+                        <li>Modo simulação (BR-021/022) reduz risco operacional: alterações/exclusões podem ser pré-visualizadas antes de confirmar</li>
+                        <li>Impressão ANTES/DEPOIS (BR-019/020) fornece rastreabilidade para auditoria</li>
+                        <li>Validação externa via N9013Q06 (BR-011) desacopla lógica de validação, mas cria dependência de programa externo</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 10: Performance -->
+                <div id="performance" class="section">
+                    <h2>10. Performance e Otimização</h2>
+
+                    <h3>Análise de Operações Críticas</h3>
+                    <table>
+                        <tr><th>Operação</th><th>Tipo</th><th>Custo Estimado</th><th>Notas</th></tr>
+                        <tr><td>GET D142-13-CADS-SIMU by ISN</td><td>Leitura Adabas</td><td>🟡 Médio</td><td>Acesso direto via ISN (índice nativo); sem varredura</td></tr>
+                        <tr><td>CALLNAT N9013Q06</td><td>Programa Externo</td><td>🟡 Médio</td><td>Overhead de contexto; chamado apenas se L001-INDC-SITC-SIMU ≠ NULL</td></tr>
+                        <tr><td>UPDATE (G1.)</td><td>Escrita Adabas</td><td>🟡 Médio</td><td>Atualização in-place no Adabas; dependente do tamanho do registro</td></tr>
+                        <tr><td>DELETE (G1.)</td><td>Deleção Adabas</td><td>🟡 Médio</td><td>Remoção lógica; transacional</td></tr>
+                        <tr><td>WRITE(1) FORM R9012001</td><td>I/O Relatório</td><td>🔴 Alto</td><td>Impressão formatada; executada 2x (ANTES e DEPOIS)</td></tr>
+                        <tr><td>Validação em DECIDE</td><td>CPU</td><td>🟢 Baixo</td><td>Operações de string/número em memória; O(N) por campo</td></tr>
+                    </table>
+
+                    <h3>Gargalos Identificados</h3>
+                    <ul>
+                        <li><strong>Impressão Dupla (ANTES/DEPOIS):</strong> Cada execução imprime o relatório R9012001 duas vezes. Em processamento em batch de alto volume, este é o custo dominante.</li>
+                        <li><strong>Dependência de N9013Q06:</strong> Chamada síncrona a programa externo; sem tratamento de timeout ou retry.</li>
+                        <li><strong>Edição de Valores Numéricos:</strong> Validação de L001-VALR-DOCM-SIMU e L001-VALR-DOCM-COBR usa EXAMINE e manipulação de string; ineficiente para altos volumes.</li>
+                        <li><strong>DECIDE FOR EVERY CONDITION:</strong> Processa todos os 13 campos mesmo que muitos sejam NULL; sem short-circuit.</li>
+                    </ul>
+
+                    <h3>Recomendações de Otimização</h3>
+                    <ul>
+                        <li><strong>Impressão condicional:</strong> Adicionar flag para imprimir ou não (ANTES apenas em relatório, DEPOIS em log apenas)</li>
+                        <li><strong>Cache de validações:</strong> Se N9013Q06 é chamado múltiplas vezes na mesma execução, cachear resultados</li>
+                        <li><strong>Validação numérica acelerada:</strong> Usar função nativa de validação numérica do Natural se disponível, em vez de EXAMINE</li>
+                        <li><strong>Early exit em DECIDE:</strong> Considerar múltiplos DECIDE IF aninhados com early exit, em vez de DECIDE FOR EVERY</li>
+                    </ul>
+
+                    <h3>Escalabilidade</h3>
+                    <ul>
+                        <li><strong>Modo batch:</strong> Processamento sequencial de registros; sem paralelismo</li>
+                        <li><strong>Transações:</strong> Cada registro constitui uma transação; sem batching de transações</li>
+                        <li><strong>Memória:</strong> Consumo mínimo; apenas 7 variáveis locais + estruturas Adabas</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 11: Problems & Risks -->
+                <div id="problems" class="section">
+                    <h2>11. Problemas e Riscos Identificados</h2>
+
+                    <h3>Problemas Detectados</h3>
+                    <table>
+                        <tr><th>#</th><th>Problema</th><th>Severidade</th><th>Impacto</th><th>Recomendação</th></tr>
+                        <tr><td>P-001</td><td>Dependências críticas não disponíveis (L9012001, A9013Q06, L9013Q13, N9013Q06, R9012001, D9013142-13)</td><td>🔴 Crítica</td><td>Impossível validar completamente o programa; análise baseada em inferência</td><td>Recuperar ou documentar estruturas de dados</td></tr>
+                        <tr><td>P-002</td><td>Validação de data não verifica ano válido (apenas formato YYYYMMDD)</td><td>🟡 Média</td><td>Datas inválidas como 20991399 passam na validação</td><td>Adicionar range check de ano e mês</td></tr>
+                        <tr><td>P-003</td><td>Validação numérica de valores com decimais usa string manipulation (EXAMINE, move right)</td><td>🟡 Média</td><td>Frágil; vulnerável a espaços/vírgulas em posições inesperadas</td><td>Usar função de validação numérica nativa</td></tr>
+                        <tr><td>P-004</td><td>N9013Q06 chamado sem tratamento de erro (além de code de retorno)</td><td>🟡 Média</td><td>Exceção em N9013Q06 não é capturada; programa pode parar inesperadamente</td><td>Adicionar ON ERROR handling</td></tr>
+                        <tr><td>P-005</td><td>Forma R9012001 presumida saber formatar D142-13-CADS-SIMU; sem verificação</td><td>🟡 Média</td><td>Se formulário não reconhecer campos, impressão pode falhar ou estar incompleta</td><td>Validar forma R9012001 e D142-13-CADS-SIMU</td></tr>
+                        <tr><td>P-006</td><td>Modo batch/interativo determinado por *DEVICE sem outras validações</td><td>🟢 Baixa</td><td>Se *DEVICE retorna valor inesperado, erro é silencioso (STOP não executado, TERMINATE também não)</td><td>Adicionar validação explícita de *DEVICE</td></tr>
+                        <tr><td>P-007</td><td>Suposição: N9013Q06 retorna 0 para sucesso; sem documentação</td><td>🟡 Média</td><td>Se programa usa convenção diferente, validação está incorreta</td><td>Confirmar convenção de retorno com equipe legacy</td></tr>
+                    </table>
+
+                    <h3>Riscos Operacionais</h3>
+                    <ul>
+                        <li><strong>RO-001 (Indisponibilidade de N9013Q06):</strong> Campo L001-INDC-SITC-SIMU não pode ser validado; impede execução quando este campo é fornecido. Risco: Batch interrompido.</li>
+                        <li><strong>RO-002 (Indisponibilidade de R9012001):</strong> Impressão ANTES/DEPOIS falha; perda de auditoria. Risco: Compliance.</li>
+                        <li><strong>RO-003 (Corrupção de dados por validação fraca):</strong> Datas ou números inválidos podem ser aceitos e persistidos. Risco: Integridade de dados.</li>
+                        <li><strong>RO-004 (Exceção não capturada em CALLNAT):</strong> Se N9013Q06 lança exceção, programa termina abruptamente. Risco: Indisponibilidade de serviço.</li>
+                        <li><strong>RO-005 (Modo simulação vs produção):</strong> Se EFETIVA é passado incorretamente, simulação real é executada (DELETE/UPDATE real). Risco: Perda de dados.</li>
+                    </ul>
+
+                    <h3>Riscos de Segurança</h3>
+                    <ul>
+                        <li><strong>RS-001 (Sem validação de autorização):</strong> Programa não valida se usuário tem permissão de alterar/excluir. Risco: Alterações não autorizadas.</li>
+                        <li><strong>RS-002 (Sem auditoria de mudanças):</strong> Apenas impressão ANTES/DEPOIS; sem log persistente de quem alterou/deletou. Risco: Rastreabilidade limitada.</li>
+                        <li><strong>RS-003 (ISN como único identificador):</strong> Se ISN for previsível ou obtido externamente, risco de alteração/deleção de registros errados. Risco: Integridade de dados.</li>
+                    </ul>
+
+                    <h3>Riscos de Manutenção</h3>
+                    <ul>
+                        <li><strong>RM-001 (Dependências oscuras):</strong> Lógica de validação acoplada a N9013Q06; sem documentação clara. Risco: Dificuldade de manutenção.</li>
+                        <li><strong>RM-002 (Subroutine única grande):</strong> MOVE-CAMPOS-NAO-NULL é 310 linhas de DECIDE para cada campo; frágil a mudanças de campo. Risco: Propensão a bugs.</li>
+                        <li><strong>RM-003 (Estrutura de dados inferida):</strong> L9012001 não disponível; comentários do código são únicas fontes de verdade. Risco: Dessincronização se campos mudarem.</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 12: Refactoring -->
+                <div id="refactoring" class="section">
+                    <h2>12. Refatoração e Oportunidades de Melhoria</h2>
+
+                    <h3>Oportunidades de Refatoração em Natural</h3>
+                    <ul>
+                        <li><strong>Separar Validação em Subroutines:</strong> Criar subroutines para cada grupo de validação (obrigatórios, opcionais, externos) em vez de DECIDE FOR EVERY monolítico</li>
+                        <li><strong>Encapsular Lógica de Edição Numérica:</strong> Extrair validação de números com decimais em função reutilizável</li>
+                        <li><strong>Usar REDEFINE ou ARRAY para MOVE-CAMPOS:</strong> Em vez de 10 WHENs idênticos, usar loop sobre array de campos</li>
+                        <li><strong>Adicionar Error Handling:</strong> Envolver CALLNAT em ON ERROR para capturar exceções</li>
+                        <li><strong>Tornar Impressão Opcional:</strong> Adicionar parâmetro PRINT-REPORT para permitir skip de WRITE(1)</li>
+                    </ul>
+
+                    <h3>Simplificações Possíveis</h3>
+                    <ul>
+                        <li>Validação de data com 4 passos (check empty, check format, check range) pode ser feita em 1 com função de data do Natural</li>
+                        <li>Múltiplas operações Adabas (GET → UPDATE/DELETE → TRANSACTION) podem ser combinadas em única operação MODIFY se Natural suportar</li>
+                        <li>Impressão dupla (ANTES/DEPOIS) pode ser substituída por diferença (delta) em modo simulação</li>
+                    </ul>
+
+                    <h3>Melhorias de Manutenibilidade</h3>
+                    <ul>
+                        <li>Adicionar comentários claros explicando padrão NULL, modo simulação, e convenção de retorno de N9013Q06</li>
+                        <li>Criar mapa de versões de campos (N8→N9 para NUMR-DOCM-COBR em SMP-0405/2012)</li>
+                        <li>Documentar estrutura de L9012001, A9013Q06, L9013Q13 como comentários (ou idealmenteem arquivo externo)</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 13: Modernization Strategy -->
+                <div id="modernization" class="section">
+                    <h2>13. Estratégia de Modernização</h2>
+
+                    <h3>Análise de Candidatura para Modernização</h3>
+                    <p><strong>Recomendação:</strong> 🟡 <strong>Moderada Prioridade</strong> — Programa é um candidato sólido para modernização, mas não crítica. A lógica é simples, mas as dependências obscuras e a falta de documentação aumentam o esforço.</p>
+
+                    <h3>Arquitetura Alvo: Java 21 + Quarkus + REST API</h3>
+                    <h4>Mapeamento de Componentes</h4>
+                    <table>
+                        <tr><th>Componente Natural</th><th>Mapeamento Quarkus</th></tr>
+                        <tr><td>P9012001 (programa batch)</td><td>REST Controller POST /simulacoes/{id}/acoes</td></tr>
+                        <tr><td>Validação de entrada (DECIDE)</td><td>Bean Validation (@Valid, @NotNull, @Pattern)</td></tr>
+                        <tr><td>CALLNAT N9013Q06</td><td>Injetar @StatusValidator service</td></tr>
+                        <tr><td>Adabas GET/UPDATE/DELETE</td><td>JPA @Entity + Panache Repository</td></tr>
+                        <tr><td>Modo simulação (EFETIVA)</td><td>@Transactional(rollbackOn={SimulationException.class}) or manual flush false</td></tr>
+                        <tr><td>Impressão R9012001</td><td>Gerar relatório PDF/HTML via Jasper ou similar</td></tr>
+                        <tr><td>*DEVICE (batch/interativo)</td><td>HTTP header X-Execution-Mode ou query param</td></tr>
+                    </table>
+
+                    <h4>Separação de Preocupações</h4>
+                    <div class="code-block">Camada REST (Presentação)
+  ↓
+Camada de Aplicação (Orquestração)
+  ├─ Validação de Entrada (Annotation-based)
+  ├─ Serviço de Validação Externa (StatusValidator)
+  └─ Transação (Simulação vs Real)
+  ↓
+Camada de Dados (Repository/Entity)
+  ├─ Entity SimulacaoCobanca (JPA)
+  ├─ Repository (Panache)
+  └─ Adabas Adapter (se Adabas permanecer)
+  ↓
+Infraestrutura
+  ├─ Database (Adabas ou PostgreSQL)
+  ├─ Report Engine (Jasper/iText)
+  └─ Audit Log
+                    </div>
+
+                    <h4>Estrutura de Projeto Quarkus Proposta</h4>
+                    <div class="code-block">src/main/java/com/chesf/siaf/simulacoes/
+├── api/
+│   └── SimulacaoController.java (REST endpoints)
+├── application/
+│   ├── SimulacaoService.java (orquestração)
+│   └── StatusValidationService.java (CALLNAT N9013Q06)
+├── domain/
+│   └── SimulacaoCobanca.java (entity)
+├── infrastructure/
+│   ├── SimulacaoRepository.java (Panache)
+│   ├── AuditLog.java (logging)
+│   └── ReportGenerator.java (R9012001)
+└── shared/
+    └── ValidationRules.java (BR-001 a BR-027)
+
+src/test/java/...
+├── SimulacaoServiceTest.java
+├── SimulacaoControllerTest.java
+└── ValidationRulesTest.java
+                    </div>
+
+                    <h4>API REST Proposta</h4>
+                    <div class="code-block">POST /api/v1/simulacoes/{id}/processar
+{
+  "smp": "SMP-0405/2012",
+  "funcao": "ALTERAR",
+  "efetiva": "NAO",
+  "campos": {
+    "codg_tipo_docm_simu": "02",
+    "codg_catg_docm_simu": "R",
+    "numr_cont_matl": "1234567890",
+    // ... outros campos
+  }
+}
+
+Resposta (200 OK - Simulação):
+{
+  "id": 123,
+  "status": "SIMULATION",
+  "antes": { ... registro antes ... },
+  "depois": { ... registro depois ... },
+  "relatorio_url": "/reports/123-apos.pdf"
+}
+
+Resposta (201 Created - Real):
+{
+  "id": 123,
+  "status": "COMMITTED",
+  "relatorio_url": "/reports/123-apos.pdf"
+}
+                    </div>
+
+                    <h3>Benefícios da Modernização</h3>
+                    <ul>
+                        <li>🟢 <strong>Escalabilidade:</strong> REST API permite múltiplas requisições concorrentes (vs batch sequencial)</li>
+                        <li>🟢 <strong>Observabilidade:</strong> Logs estruturados, métricas Micrometer, tracing distribuído</li>
+                        <li>🟢 <strong>Testabilidade:</strong> Testes unitários e integração com Spring Test, TestContainers para Adabas/Postgres</li>
+                        <li>🟢 <strong>Manutenibilidade:</strong> Código moderno em Java, padrões conhecidos (Repository, Service)</li>
+                        <li>🟢 <strong>Agilidade:</strong> Deploy rápido em container, no-downtime updates (rolling deployment)</li>
+                    </ul>
+
+                    <h3>Esforço Estimado</h3>
+                    <table>
+                        <tr><th>Tarefa</th><th>Esforço</th><th>Notas</th></tr>
+                        <tr><td>Análise e Design</td><td>3-4 dias</td><td>Depende de obter L9012001, A9013Q06, N9013Q06, R9012001</td></tr>
+                        <tr><td>Implementação Core (REST + Validação)</td><td>5-6 dias</td><td>Quarkus skeleton + controllers + services</td></tr>
+                        <tr><td>Integração Adabas (ou migração BD)</td><td>3-4 dias</td><td>Se Adabas, usar Quarkus Adabas extension; se migrar, mapear schema</td></tr>
+                        <tr><td>Geração de Relatórios</td><td>2-3 dias</td><td>Jasper ou iText para R9012001</td></tr>
+                        <tr><td>Testes (Unit + Integration)</td><td>4-5 dias</td><td>Coverage > 80%</td></tr>
+                        <tr><td>Documentação e Deploy</td><td>2-3 dias</td><td>API docs (OpenAPI), deployment guide, runbook</td></tr>
+                        <tr><td><strong>Total</strong></td><td><strong>19-25 dias</strong></td><td><strong>~4 semanas, 1 dev senior ou 2 juniors</strong></td></tr>
+                    </table>
+
+                    <h3>Riscos de Modernização</h3>
+                    <ul>
+                        <li><strong>Perda de Funcionalidade:</strong> Se L9012001/N9013Q06/R9012001 não forem encontrados, validação/saída podem ser incompletas</li>
+                        <li><strong>Incompatibilidade de Transação:</strong> Natural's BACKOUT é automático; Quarkus requer rollbackOn() configurado corretamente</li>
+                        <li><strong>Performance:</strong> Quarkus é rápido, mas REST overhead + ORM podem ser mais lentos que Natural nativo para batch de alto volume</li>
+                    </ul>
+
+                    <h3>Passos Seguintes (Prioritário)</h3>
+                    <ol>
+                        <li>Recuperar L9012001, A9013Q06, N9013Q06, R9012001</li>
+                        <li>Validar mapeamento de estruturas de dados com equipe legacy</li>
+                        <li>Criar proof-of-concept Quarkus + Adabas ou Quarkus + banco SQL (se migração)</li>
+                        <li>Estimar e agendar modernização em roadmap</li>
+                    </ol>
+                </div>
+
+                <!-- SECTION 14: Complete HTML Code & Missing Artifacts -->
+                <div id="missing-artifacts" class="section">
+                    <h2>14. Registro de Artefatos Ausentes</h2>
+
+                    <div class="warning">
+                        <strong>⚠️ Aviso Crítico:</strong> As conclusões documentadas nesta análise estão sujeitas às limitações abaixo. Qualquer conclusão baseada em código ausente está marcada como "(Inferência)".
+                    </div>
+
+                    <h3>Artefatos Críticos Não Fornecidos</h3>
+                    <table>
+                        <tr><th>Artefato</th><th>Tipo</th><th>Esperado em</th><th>Impacto de Ausência</th><th>Status de Análise</th></tr>
+                        <tr><td>L9012001</td><td>LDA (Local Data Area)</td><td>Codigo-natural/L9012001.* ou similar</td><td>Campos de entrada não confirmados; nomes/tipos inferidos de comentários</td><td>❌ Inferência</td></tr>
+                        <tr><td>A9013Q06</td><td>LDA</td><td>Codigo-natural/A9013Q06.*</td><td>Interface com N9013Q06 não confirmada; NQ06-* fields não documentados</td><td>❌ Inferência</td></tr>
+                        <tr><td>L9013Q13</td><td>LDA</td><td>Codigo-natural/L9013Q13.*</td><td>Propósito desconhecido; presumivelmente suporte</td><td>❌ Inferência</td></tr>
+                        <tr><td>N9013Q06</td><td>Programa Natural</td><td>Codigo-natural/N9013Q06.NSP</td><td>Lógica de validação de código de situação não documentada; assumido return 0=válido</td><td>❌ Inferência</td></tr>
+                        <tr><td>R9012001</td><td>Formulário/Relatório</td><td>Relatorios/ ou Forms/</td><td>Formato de saída ANTES/DEPOIS desconhecido; presumido ser formulário padrão</td><td>❌ Inferência</td></tr>
+                        <tr><td>D9013142-13 (DDM/View)</td><td>Data Definition</td><td>Codigo-natural/ ou metadata/</td><td>Campos do arquivo não confirmados; nomes inferidos de P9012001</td><td>❌ Inferência</td></tr>
+                    </table>
+
+                    <h3>Impacto por Seção da Documentação</h3>
+                    <table>
+                        <tr><th>Seção</th><th>Dependências Ausentes</th><th>Grau de Certeza</th></tr>
+                        <tr><td>Resumo Executivo</td><td>Nenhuma - Meta-análise</td><td>✅ 100%</td></tr>
+                        <tr><td>Resumo Técnico</td><td>Nenhuma - Análise de código P9012001</td><td>✅ 100%</td></tr>
+                        <tr><td>Fluxo de Execução</td><td>Nenhuma - Análise de P9012001</td><td>✅ 100%</td></tr>
+                        <tr><td>Inventário de Objetos</td><td>L9012001, A9013Q06, L9013Q13, D9013142-13</td><td>🟡 70%</td></tr>
+                        <tr><td>Dependências</td><td>Todas as acima</td><td>🟡 60%</td></tr>
+                        <tr><td>Grafo de Chamadas</td><td>N9013Q06 (lógica interna), R9012001 (formato), A9013Q06 (interface)</td><td>🟡 75%</td></tr>
+                        <tr><td>Matriz CRUD</td><td>D9013142-13 (campos, constraints), A9013Q06 (interface N9013Q06)</td><td>🟡 70%</td></tr>
+                        <tr><td>Mapa de Impacto</td><td>Todos os programas que usam D9013142-13</td><td>🔴 20%</td></tr>
+                        <tr><td>Regras de Negócio</td><td>N9013Q06 (lógica de validação código de situação)</td><td>🟡 90%</td></tr>
+                        <tr><td>Performance</td><td>R9012001 (layout/volume), D9013142-13 (índices)</td><td>🟡 75%</td></tr>
+                        <tr><td>Problemas & Riscos</td><td>Impacto de dependências ausentes desconhecido</td><td>🟡 80%</td></tr>
+                        <tr><td>Refatoração</td><td>Nenhuma — recomendações genéricas</td><td>✅ 90%</td></tr>
+                        <tr><td>Modernização</td><td>Todas as acima — mapeamento depende de estruturas reais</td><td>🟡 65%</td></tr>
+                    </table>
+
+                    <h3>Como Aumentar a Confiança da Análise</h3>
+                    <ol>
+                        <li><strong>Recuperar L9012001:</strong> Localizar arquivo LDA; confirmar campos de entrada e tipos. Espera-se conter INPUT section ou LOCAL USING L001-*.</li>
+                        <li><strong>Recuperar A9013Q06:</strong> Confirmar campos NQ06-LIST-PARM, NQ06-CODG-SITC, NQ06-CODG-RETN e convenção de retorno.</li>
+                        <li><strong>Recuperar N9013Q06:</strong> Confirmar propósito, parâmetros de entrada/saída, códigos de erro possíveis.</li>
+                        <li><strong>Recuperar ou testar R9012001:</strong> Confirmar campos impressos, layout, se suporta D142-13-CADS-SIMU.</li>
+                        <tr><td><strong>Recuperar definição D9013142-13:</strong> Confirmar campos, tipos, índices, constraints, e qual view é D142-13-CADS-SIMU.</td></tr>
+                        <li><strong>Executar programa em sandbox:</strong> Testar com valores de exemplo (NULL e não-NULL) para validar fluxo real.</li>
+                        <li><strong>Localizar programas dependentes:</strong> Buscar quem chama P9012001 ou acessa D9013142-13 (impacto reverso).</li>
+                    </ol>
+
+                    <h3>Conclusão Geral</h3>
+                    <p>
+                        Esta documentação é <strong>75% confiável para análise técnica</strong> (fluxo, validação, estrutura) e <strong>50% confiável para análise de impacto</strong> (dependências, regras exatas, modernização).
+                        <br/><br/>
+                        <strong>Para tomada de decisão crítica (modernização, alterações), recupere os 6 artefatos ausentes antes de proceder.</strong>
+                    </p>
+                </div>
+            </div>
+
+            <footer>
+                <p>Documentação Técnica Gerada em Análise Completa de P9012001</p>
+                <p>Último Ciclo de Manutenção: SMP-0405/2012 (08/05/2012)</p>
+                <p>© CHESF/Stefanini - Confidencial</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const sections = [
+            { id: 'executive-summary', title: '1. Resumo Executivo' },
+            { id: 'technical-summary', title: '2. Resumo Técnico' },
+            { id: 'program-flow', title: '3. Fluxo de Execução' },
+            { id: 'object-inventory', title: '4. Inventário de Objetos' },
+            { id: 'dependencies', title: '5. Mapa de Dependências' },
+            { id: 'call-graph', title: '6. Grafo de Chamadas' },
+            { id: 'crud-matrix', title: '7. Matriz CRUD' },
+            { id: 'impact-map', title: '8. Mapa de Impacto' },
+            { id: 'business-rules', title: '9. Regras de Negócio' },
+            { id: 'performance', title: '10. Performance' },
+            { id: 'problems', title: '11. Problemas e Riscos' },
+            { id: 'refactoring', title: '12. Refatoração' },
+            { id: 'modernization', title: '13. Estratégia de Modernização' },
+            { id: 'missing-artifacts', title: '14. Artefatos Ausentes' }
+        ];
+
+        const toc = document.getElementById('tableOfContents');
+        sections.forEach(section => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = section.title;
+            a.onclick = (e) => {
+                e.preventDefault();
+                goToSection(section.id);
+            };
+            li.appendChild(a);
+            toc.appendChild(li);
+        });
+
+        function goToSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            const li = Array.from(toc.querySelectorAll('li')).find(l => l.querySelector('a').onclick.toString().includes(sectionId));
+            if (li) li.classList.add('active');
+            const section = sections.find(s => s.id === sectionId);
+            document.getElementById('currentLocation').textContent = ' > ' + section.title;
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            const query = e.target.value.toLowerCase();
+            if (query.length < 2) {
+                document.getElementById('searchResults').innerHTML = '';
+                return;
+            }
+            let results = [];
+            sections.forEach(section => {
+                const sectionEl = document.getElementById(section.id);
+                if (sectionEl.textContent.toLowerCase().includes(query)) {
+                    results.push(section);
+                }
+            });
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = results.map(r => 
+                `<div class="search-result" style="display: block !important; background: #fffacd; padding: 10px; margin: 5px 0; cursor: pointer; border-radius: 4px;" onclick="goToSection('${r.id}')">${r.title}</div>`
+            ).join('');
+        });
+
+        document.querySelectorAll('.collapsible').forEach(el => {
+            el.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                if (content && content.classList.contains('collapsible-content')) {
+                    content.classList.toggle('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
