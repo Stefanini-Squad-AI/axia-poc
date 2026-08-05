@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visão Geral do Repositório - SIAF Batch Programs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container { max-width: 1400px; margin: 0 auto; background: white; }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.1em; opacity: 0.9; }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 30px 20px;
+            background: #f9f9f9;
+            border-bottom: 2px solid #667eea;
+        }
+        .indicator {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        .indicator-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        .indicator-label {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 500;
+        }
+        .nav-wrapper {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+        .sidebar h3 {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #667eea;
+        }
+        .sidebar ul { list-style: none; }
+        .sidebar li {
+            margin: 8px 0;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .sidebar li:hover { background: #34495e; }
+        .sidebar li.active { background: #667eea; }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        h4 {
+            color: #555;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        p { margin-bottom: 12px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        table tr:hover { background: #f9f9f9; }
+        .search-box {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+            line-height: 1.4;
+        }
+        .flow-diagram {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .program-card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            background: #f9f9f9;
+        }
+        .program-card h4 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        .program-card p {
+            margin-bottom: 8px;
+        }
+        .program-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .program-link:hover {
+            background: #764ba2;
+        }
+        .breadcrumb {
+            padding: 10px 20px;
+            background: #ecf0f1;
+            font-size: 0.9em;
+            border-bottom: 1px solid #ddd;
+        }
+        .breadcrumb a { color: #667eea; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .dependency-node {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+        .dependency-node.external {
+            background: #ff6b6b;
+        }
+        .dependency-node.available {
+            background: #28a745;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Visão Geral do Repositório</h1>
+        <p>SIAF S9013 - Batch Programs &amp; Dependencies</p>
+    </header>
+
+    <div class="dashboard">
+        <div class="indicator">
+            <div class="indicator-label">Total de Programas</div>
+            <div class="indicator-value">1</div>
+        </div>
+        <div class="indicator">
+            <div class="indicator-label">Programas Documentados</div>
+            <div class="indicator-value">1</div>
+        </div>
+        <div class="indicator">
+            <div class="indicator-label">Taxa de Cobertura</div>
+            <div class="indicator-value">100%</div>
+        </div>
+        <div class="indicator">
+            <div class="indicator-label">Dependências Mapeadas</div>
+            <div class="indicator-value">6</div>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Pesquisar documentação..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        <div id="searchResults"></div>
+    </div>
+
+    <div class="nav-wrapper">
+        <div class="sidebar">
+            <h3>📑 Índice</h3>
+            <ul id="tableOfContents"></ul>
+        </div>
+
+        <div style="flex: 1;">
+            <div class="breadcrumb">
+                <strong>Localização:</strong> <a href="#" onclick="goToSection('overview')">Início</a>
+                <span id="currentLocation"> > Visão Geral</span>
+            </div>
+
+            <div class="main-content">
+                <!-- SECTION 1: Overview -->
+                <div id="overview" class="section active">
+                    <h2>1. Visão Geral do Repositório</h2>
+
+                    <h3>Objetivo da Documentação</h3>
+                    <p>
+                        Esta documentação consolida a visão técnica de todos os programas do repositório SIAF S9013,
+                        incluindo um mapa completo de dependências entre eles, objetos compartilhados e arquivos de dados acessados.
+                        O objetivo é permitir que analistas de manutenção avaliem impacto de mudanças sem necessidade de ler
+                        código-fonte diretamente.
+                    </p>
+
+                    <h3>Cliente e Sistema</h3>
+                    <p><strong>Cliente:</strong> CHESF - Cia Hidro Elétrica do São Francisco</p>
+                    <p><strong>Sistema:</strong> S9013 - SIAF (Sistema de Informação de Aquisição e Fornecimento)</p>
+
+                    <h3>Cobertura Atual</h3>
+                    <div class="success">
+                        <strong>✅ 100% dos programas documentados:</strong> O repositório contém 1 programa (P9012001),
+                        ambos com documentação técnica completa em 14 seções padronizadas.
+                    </div>
+
+                    <h3>Como Usar Esta Documentação</h3>
+                    <ol>
+                        <li><strong>Selecione um programa</strong> na seção "Programas" ou use a navegação lateral</li>
+                        <li><strong>Consulte o Mapa de Dependências Consolidado</strong> para entender relacionamentos entre programas</li>
+                        <li><strong>Analise o Mapa de Objetos Compartilhados</strong> para identificar efeitos colaterais potenciais</li>
+                        <li><strong>Revise as Regras de Negócio</strong> de cada programa antes de alterações</li>
+                        <li><strong>Consulte o Mapa de Impacto</strong> para entender quem será afetado por uma mudança</li>
+                    </ol>
+                </div>
+
+                <!-- SECTION 2: Programs List -->
+                <div id="programs" class="section">
+                    <h2>2. Programas do Repositório</h2>
+
+                    <h3>Lista Completa de Programas (1 total)</h3>
+
+                    <div class="program-card">
+                        <h4>P9012001 - Alteração/Exclusão de Registros via ISN</h4>
+                        <p><strong>Tipo:</strong> Natural Structured Programming (NSP)</p>
+                        <p><strong>Modo:</strong> Batch com suporte a modo interativo</p>
+                        <p><strong>Objetivo:</strong> Alterar ou excluir registros do arquivo de simulações de cobrança (D9013142-13) usando ISN como identificador</p>
+                        <p><strong>Data de Criação:</strong> 21/03/2012</p>
+                        <p><strong>Última Manutenção:</strong> 08/05/2012 (SMP-0405/2012)</p>
+                        <p><strong>Status de Documentação:</strong> ✅ Completa - 14 seções</p>
+                        <a href="P9012001-Documentation.html" class="program-link">📖 Acessar Documentação Completa</a>
+                    </div>
+
+                    <h3>Estatísticas de Cobertura</h3>
+                    <table>
+                        <tr>
+                            <th>Programa</th>
+                            <th>Arquivo</th>
+                            <th>Status</th>
+                            <th>Seções</th>
+                            <th>Última Atualização</th>
+                        </tr>
+                        <tr>
+                            <td>P9012001</td>
+                            <td>Codigo-natural/P9012001.NSP</td>
+                            <td>✅ Documentado</td>
+                            <td>14/14</td>
+                            <td>2012-05-08 (SMP-0405/2012)</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- SECTION 3: Dependencies Consolidation -->
+                <div id="dependencies" class="section">
+                    <h2>3. Mapa de Dependências Consolidado</h2>
+
+                    <h3>Dependências Diretas por Programa</h3>
+
+                    <h4>P9012001 depende de:</h4>
+                    <div class="flow-diagram">
+├── LOCAL USING L9012001 ...................... ❌ LDA (não disponível)
+├── LOCAL USING A9013Q06 ...................... ❌ LDA (não disponível)
+├── LOCAL USING L9013Q13 ...................... ❌ LDA (não disponível)
+├── GET/UPDATE/DELETE D142-13-CADS-SIMU ....... ❌ View/DDM (não disponível)
+│   └── Arquivo: D9013142-13 .................. ❌ Definição não disponível
+├── CALLNAT 'N9013Q06' ........................ ❌ Programa (não disponível)
+│   └── Interface: NQ06-LIST-PARM (via A9013Q06)
+└── FORM 'R9012001' ........................... ❌ Relatório (não disponível)
+                    </div>
+
+                    <h3>Dependências Inversas (Quem Depende de Cada Objeto)</h3>
+
+                    <h4>D9013142-13 é utilizado por:</h4>
+                    <div class="warning">
+                        <strong>❌ Não determinável:</strong> O repositório contém apenas P9012001.
+                        Não é possível identificar outros programas que acessam este arquivo.
+                    </div>
+
+                    <h4>Objetos com Disponibilidade Desconhecida:</h4>
+                    <table>
+                        <tr>
+                            <th>Objeto</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Usado por</th>
+                            <th>Impacto da Ausência</th>
+                        </tr>
+                        <tr>
+                            <td>L9012001</td>
+                            <td>LDA</td>
+                            <td>❌ Não encontrado</td>
+                            <td>P9012001</td>
+                            <td>Campos de entrada não confirmados</td>
+                        </tr>
+                        <tr>
+                            <td>A9013Q06</td>
+                            <td>LDA</td>
+                            <td>❌ Não encontrado</td>
+                            <td>P9012001, N9013Q06</td>
+                            <td>Interface com N9013Q06 não confirmada</td>
+                        </tr>
+                        <tr>
+                            <td>L9013Q13</td>
+                            <td>LDA</td>
+                            <td>❌ Não encontrado</td>
+                            <td>P9012001</td>
+                            <td>Propósito desconhecido</td>
+                        </tr>
+                        <tr>
+                            <td>N9013Q06</td>
+                            <td>Programa</td>
+                            <td>❌ Não encontrado</td>
+                            <td>P9012001</td>
+                            <td>Validação de status não documentada</td>
+                        </tr>
+                        <tr>
+                            <td>R9012001</td>
+                            <td>Formulário</td>
+                            <td>❌ Não encontrado</td>
+                            <td>P9012001</td>
+                            <td>Formato de saída desconhecido</td>
+                        </tr>
+                        <tr>
+                            <td>D9013142-13</td>
+                            <td>Arquivo Adabas</td>
+                            <td>❌ Não encontrado</td>
+                            <td>P9012001</td>
+                            <td>Estrutura não confirmada</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- SECTION 4: Shared Objects -->
+                <div id="shared-objects" class="section">
+                    <h2>4. Mapa de Objetos Compartilhados</h2>
+
+                    <h3>Análise de Compartilhamento</h3>
+                    <div class="info">
+                        <strong>ℹ️ Limitação:</strong> Com apenas 1 programa no repositório, não é possível identificar
+                        objetos compartilhados entre múltiplos programas. Esta seção será preenchida conforme novos programas
+                        forem adicionados à documentação.
+                    </div>
+
+                    <h3>Próximos Passos</h3>
+                    <p>
+                        Quando novos programas forem documentados, esta seção incluirá:
+                    </p>
+                    <ul>
+                        <li>Matriz de acesso a arquivos de dados (qual programa acessa qual arquivo)</li>
+                        <li>Matriz de uso de objetos (LDAs, subroutines, formulários)</li>
+                        <li>Análise de efeitos colaterais potenciais quando múltiplos programas compartilham dados</li>
+                        <li>Recomendações para isolamento ou sincronização de dados</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 5: Impact Analysis -->
+                <div id="impact-analysis" class="section">
+                    <h2>5. Análise de Impacto de Mudanças</h2>
+
+                    <h3>Metodologia</h3>
+                    <p>
+                        Para avaliar o impacto de uma alteração em um programa ou objeto, use o seguinte fluxo:
+                    </p>
+                    <ol>
+                        <li><strong>Identifique o programa/objeto</strong> que será alterado</li>
+                        <li><strong>Consulte o Mapa de Dependências</strong> para ver quem depende deste programa/objeto</li>
+                        <li><strong>Para cada dependente:</strong>
+                            <ul>
+                                <li>Leia a documentação completa do programa</li>
+                                <li>Identifique como o programa usa o objeto alterado</li>
+                                <li>Determine se a alteração quebra funcionalidade ou modifica comportamento</li>
+                            </ul>
+                        </li>
+                        <li><strong>Consulte Regras de Negócio e Riscos</strong> para cada programa afetado</li>
+                        <li><strong>Documente o impacto</strong> em relatório de análise antes de executar a mudança</li>
+                    </ol>
+
+                    <h3>Cenários de Impacto Comum</h3>
+                    <table>
+                        <tr>
+                            <th>Tipo de Mudança</th>
+                            <th>Objetos Afetados</th>
+                            <th>Análise Necessária</th>
+                            <th>Risco</th>
+                        </tr>
+                        <tr>
+                            <td>Alterar campo em arquivo Adabas</td>
+                            <td>Arquivo + todos os programas que acessam</td>
+                            <td>Todas as seções "Inventário de Objetos" e "CRUD Matrix"</td>
+                            <td>🔴 Alto</td>
+                        </tr>
+                        <tr>
+                            <td>Alterar LDA (estrutura de dados)</td>
+                            <td>LDA + todos os programas que usam LOCAL USING</td>
+                            <td>Seções "Mapa de Dependências" e "Problemas e Riscos"</td>
+                            <td>🔴 Alto</td>
+                        </tr>
+                        <tr>
+                            <td>Alterar programa chamado (CALLNAT)</td>
+                            <td>Programa chamado + todos os callers</td>
+                            <td>Seção "Grafo de Chamadas" de cada caller</td>
+                            <td>🟡 Médio</td>
+                        </tr>
+                        <tr>
+                            <td>Alterar regra de validação</td>
+                            <td>Programa + possíveis dependentes de dados</td>
+                            <td>Seção "Regras de Negócio" e "Mapa de Impacto"</td>
+                            <td>🟡 Médio</td>
+                        </tr>
+                    </table>
+
+                    <h3>Exemplo Prático: Alterar P9012001</h3>
+                    <div class="warning">
+                        <strong>⚠️ Análise de Impacto:</strong> Se P9012001 for alterado:
+                    </div>
+                    <ol>
+                        <li><strong>Dependências diretas afetadas:</strong> Nenhum programa no repositório depende de P9012001</li>
+                        <li><strong>Objetos alterados potencialmente:</strong> D9013142-13 (se lógica de UPDATE/DELETE mudar)</li>
+                        <li><strong>Risco operacional:</strong> Qualquer programa que acessa D9013142-13 pode ser afetado
+                            (não identificado no repositório atual)</li>
+                        <li><strong>Validações afetadas:</strong> Se regras de negócio (BR-001 a BR-027) forem alteradas,
+                            dados podem ser aceitos/rejeitados de forma diferente</li>
+                    </ol>
+                </div>
+
+                <!-- SECTION 6: Missing Artifacts -->
+                <div id="missing-artifacts" class="section">
+                    <h2>6. Artefatos Ausentes e Limitações</h2>
+
+                    <h3>Artefatos Críticos Não Localizados</h3>
+                    <table>
+                        <tr>
+                            <th>Artefato</th>
+                            <th>Tipo</th>
+                            <th>Localização Esperada</th>
+                            <th>Impacto</th>
+                            <th>Ação Recomendada</th>
+                        </tr>
+                        <tr>
+                            <td>L9012001</td>
+                            <td>Local Data Area (LDA)</td>
+                            <td>Codigo-natural/</td>
+                            <td>Estrutura de entrada não confirmada</td>
+                            <td>Localizar e adicionar ao repositório</td>
+                        </tr>
+                        <tr>
+                            <td>A9013Q06</td>
+                            <td>Local Data Area (LDA)</td>
+                            <td>Codigo-natural/</td>
+                            <td>Interface com programa externo não confirmada</td>
+                            <td>Localizar e adicionar ao repositório</td>
+                        </tr>
+                        <tr>
+                            <td>L9013Q13</td>
+                            <td>Local Data Area (LDA)</td>
+                            <td>Codigo-natural/</td>
+                            <td>Propósito desconhecido</td>
+                            <td>Localizar ou remover referência</td>
+                        </tr>
+                        <tr>
+                            <td>N9013Q06</td>
+                            <td>Programa Natural</td>
+                            <td>Codigo-natural/</td>
+                            <td>Lógica de validação não documentada</td>
+                            <td>Localizar e documentar</td>
+                        </tr>
+                        <tr>
+                            <td>R9012001</td>
+                            <td>Formulário/Relatório</td>
+                            <td>Relatorios/ ou Forms/</td>
+                            <td>Formato de saída desconhecido</td>
+                            <td>Localizar ou recriar</td>
+                        </tr>
+                        <tr>
+                            <td>D9013142-13 (DDM/View)</td>
+                            <td>Data Definition</td>
+                            <td>Codigo-natural/ ou metadata/</td>
+                            <td>Estrutura de arquivo não confirmada</td>
+                            <td>Recuperar definição do banco</td>
+                        </tr>
+                    </table>
+
+                    <h3>Confiabilidade da Documentação Atual</h3>
+                    <p>
+                        <strong>75% confiável para análise técnica</strong> (fluxo, validação, estrutura) —
+                        baseada em análise do código-fonte P9012001.NSP
+                    </p>
+                    <p>
+                        <strong>50% confiável para análise de impacto</strong> (dependências, regras exatas) —
+                        limitada por falta de artefatos externos
+                    </p>
+
+                    <h3>Próximos Passos para Aumentar Confiança</h3>
+                    <ol>
+                        <li>Recuperar os 6 artefatos ausentes listados acima</li>
+                        <li>Executar P9012001 em sandbox com valores de teste</li>
+                        <li>Validar suposições sobre convenções de retorno de N9013Q06</li>
+                        <li>Identificar quais programas acessam D9013142-13 (dependências inversas)</li>
+                        <li>Atualizar documentação com informações confirmadas</li>
+                    </ol>
+                </div>
+
+                <!-- SECTION 7: Documentation Standards -->
+                <div id="standards" class="section">
+                    <h2>7. Padrões de Documentação</h2>
+
+                    <h3>Estrutura de 14 Seções</h3>
+                    <p>
+                        Cada programa é documentado em 14 seções padronizadas, conforme descrição abaixo.
+                        Esta padronização permite comparação direta entre programas:
+                    </p>
+                    <table>
+                        <tr>
+                            <th>Seção</th>
+                            <th>Propósito</th>
+                            <th>Público-Alvo</th>
+                            <th>Quando Usar</th>
+                        </tr>
+                        <tr>
+                            <td>1. Resumo Executivo</td>
+                            <td>Visão de alto nível: o quê, quem, quando</td>
+                            <td>Gerentes, Analistas</td>
+                            <td>Primeira leitura; decisões de impacto</td>
+                        </tr>
+                        <tr>
+                            <td>2. Resumo Técnico</td>
+                            <td>Plataforma, linguagem, métricas de código</td>
+                            <td>Arquitetos, Analistas Técnicos</td>
+                            <td>Avaliação de modernização</td>
+                        </tr>
+                        <tr>
+                            <td>3. Fluxo de Execução</td>
+                            <td>Passo-a-passo do programa</td>
+                            <td>Programadores, QA</td>
+                            <td>Compreender lógica; testes</td>
+                        </tr>
+                        <tr>
+                            <td>4. Inventário de Objetos</td>
+                            <td>Lista completa de objetos usados</td>
+                            <td>Analistas, DBA</td>
+                            <td>Rastrear dependências; localizar código</td>
+                        </tr>
+                        <tr>
+                            <td>5. Mapa de Dependências</td>
+                            <td>Quem/o quê o programa depende</td>
+                            <td>Analistas de Impacto</td>
+                            <td>Análise de mudança (programa → mundo)</td>
+                        </tr>
+                        <tr>
+                            <td>6. Grafo de Chamadas</td>
+                            <td>Profundidade de chamadas; cadeia de dependências</td>
+                            <td>Programadores, Analistas</td>
+                            <td>Entender cascata de falhas</td>
+                        </tr>
+                        <tr>
+                            <td>7. Matriz CRUD</td>
+                            <td>Operações (Create, Read, Update, Delete) por tabela/arquivo</td>
+                            <td>DBA, Analistas de Dados</td>
+                            <td>Análise de integridade; replicação</td>
+                        </tr>
+                        <tr>
+                            <td>8. Mapa de Impacto</td>
+                            <td>Quem depende deste programa</td>
+                            <td>Analistas de Impacto</td>
+                            <td>Análise de mudança (mundo → programa)</td>
+                        </tr>
+                        <tr>
+                            <td>9. Regras de Negócio</td>
+                            <td>Validações, decisões; BR-001, BR-002, etc.</td>
+                            <td>Analistas de Negócio, Compliance</td>
+                            <td>Verificar regras antes de alterar</td>
+                        </tr>
+                        <tr>
+                            <td>10. Performance</td>
+                            <td>Operações críticas; gargalos; escalabilidade</td>
+                            <td>Arquitetos, Analistas de Performance</td>
+                            <td>Otimização; planejamento de capacidade</td>
+                        </tr>
+                        <tr>
+                            <td>11. Problemas e Riscos</td>
+                            <td>Bugs conhecidos; riscos operacionais; segurança</td>
+                            <td>Todos (referência rápida)</td>
+                            <td>Antes de executar em produção</td>
+                        </tr>
+                        <tr>
+                            <td>12. Refatoração</td>
+                            <td>Oportunidades de melhoria técnica</td>
+                            <td>Arquitetos, Programadores</td>
+                            <td>Planejamento de modernização</td>
+                        </tr>
+                        <tr>
+                            <td>13. Estratégia de Modernização</td>
+                            <td>Candidatura para refactor; roadmap; ROI</td>
+                            <td>Gestores, Arquitetos</td>
+                            <td>Decisões de investimento em tecnologia</td>
+                        </tr>
+                        <tr>
+                            <td>14. Artefatos Ausentes</td>
+                            <td>Limitações da análise; grau de confiança</td>
+                            <td>Todos (transparência de risco)</td>
+                            <td>Antes de tomada de decisão crítica</td>
+                        </tr>
+                    </table>
+
+                    <h3>Como Adicionar Novo Programa</h3>
+                    <p>
+                        Quando um novo programa for adicionado ao repositório `Codigo-natural/`, execute os seguintes passos:
+                    </p>
+                    <ol>
+                        <li>Analise o arquivo `.NSP` do programa</li>
+                        <li>Crie novo arquivo HTML `&lt;PROGRAMA&gt;-Documentation.html` (exemplo: P9012002-Documentation.html)
+                            usando P9012001-Documentation.html como template</li>
+                        <li>Preencha todas as 14 seções com informações específicas do novo programa</li>
+                        <li>Adicione uma linha na tabela de programas desta REPOSITORY-OVERVIEW.html</li>
+                        <li>Atualize o Mapa de Dependências Consolidado com as dependências do novo programa</li>
+                        <li>Identifique objetos compartilhados e atualize a seção "Mapa de Objetos Compartilhados"</li>
+                        <li>Revise análise de impacto e atualize "Mapa de Impacto (Dependências Inversas)" de todos os programas afetados</li>
+                    </ol>
+
+                    <h3>Convenções de Nomenclatura</h3>
+                    <ul>
+                        <li><strong>Programas:</strong> `P&lt;número&gt;` (ex: P9012001, P9012002)</li>
+                        <li><strong>Documentação:</strong> `&lt;PROGRAMA&gt;-Documentation.html` na raiz do repositório</li>
+                        <li><strong>Arquivos de Código:</strong> `Codigo-natural/&lt;ARQUIVO&gt;.NSP`</li>
+                        <li><strong>LDAs:</strong> `L&lt;número&gt;` (Local Data Area) ou `A&lt;número&gt;` (shared LDA)</li>
+                        <li><strong>Formulários:</strong> `R&lt;número&gt;` (Report/Formulário)</li>
+                        <li><strong>Arquivos Adabas:</strong> `D&lt;número&gt;` (Data file)</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 8: Quick Reference -->
+                <div id="quick-reference" class="section">
+                    <h2>8. Referência Rápida</h2>
+
+                    <h3>Buscar um Programa por Arquivo de Dados</h3>
+                    <table>
+                        <tr>
+                            <th>Arquivo</th>
+                            <th>Programas que Acessam</th>
+                            <th>Operações</th>
+                        </tr>
+                        <tr>
+                            <td>D9013142-13</td>
+                            <td>P9012001</td>
+                            <td>READ, UPDATE, DELETE</td>
+                        </tr>
+                    </table>
+
+                    <h3>Buscar um Programa por Programa Chamado (CALLNAT)</h3>
+                    <table>
+                        <tr>
+                            <th>Programa Chamado</th>
+                            <th>Chamado por</th>
+                            <th>Propósito</th>
+                        </tr>
+                        <tr>
+                            <td>N9013Q06</td>
+                            <td>P9012001</td>
+                            <td>Validar código de situação</td>
+                        </tr>
+                    </table>
+
+                    <h3>Ciclos de Vida Conhecidos</h3>
+                    <table>
+                        <tr>
+                            <th>Programa</th>
+                            <th>Criação</th>
+                            <th>Última Alteração</th>
+                            <th>Documento SMP</th>
+                            <th>Analista</th>
+                        </tr>
+                        <tr>
+                            <td>P9012001</td>
+                            <td>21/03/2012</td>
+                            <td>08/05/2012</td>
+                            <td>SMP-0405/2012</td>
+                            <td>Edvilson Silva</td>
+                        </tr>
+                    </table>
+
+                    <h3>Atalhos para Documentação</h3>
+                    <ul>
+                        <li><a href="P9012001-Documentation.html">📖 P9012001 - Documentação Completa</a></li>
+                        <li><strong>Regras de Negócio (BR-001 a BR-027):</strong> P9012001 Seção 9</li>
+                        <li><strong>Riscos Identificados:</strong> P9012001 Seção 11</li>
+                        <li><strong>Estratégia de Modernização:</strong> P9012001 Seção 13</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 9: Updates & Maintenance -->
+                <div id="maintenance" class="section">
+                    <h2>9. Manutenção da Documentação</h2>
+
+                    <h3>Quando Atualizar a Documentação</h3>
+                    <ul>
+                        <li><strong>Alteração de programa:</strong> Atualizar seções 3 (Fluxo), 9 (Regras), 11 (Riscos)</li>
+                        <li><strong>Adição de nova dependência:</strong> Atualizar seção 5 (Dependências) e 8 (Impacto)</li>
+                        <li><strong>Adição de novo programa ao repositório:</strong> Criar nova documentação de 14 seções + atualizar índice</li>
+                        <li><strong>Recuperação de artefato ausente:</strong> Atualizar seção 14 (Artefatos Ausentes) de todos os programas afetados</li>
+                        <li><strong>Mudança de ambiente (Adabas versão, etc):</strong> Atualizar seção 2 (Resumo Técnico) e 10 (Performance)</li>
+                    </ul>
+
+                    <h3>Responsabilidades</h3>
+                    <ul>
+                        <li><strong>Programador:</strong> Mantém código atualizado no repositório</li>
+                        <li><strong>Analista Técnico:</strong> Atualiza documentação quando código muda (seções 1-6)</li>
+                        <li><strong>Analista de Negócio:</strong> Atualiza regras de negócio (seção 9)</li>
+                        <li><strong>Arquiteto:</strong> Atualiza estratégia de modernização (seção 13)</li>
+                        <li><strong>QA/DBA:</strong> Atualiza CRUD matrix, performance, riscos (seções 7, 10, 11)</li>
+                    </ul>
+
+                    <h3>Processamento de Alteração Exemplo</h3>
+                    <p>
+                        Se uma alteração SMP (ex: SMP-0406/2025) for autorizada para P9012001:
+                    </p>
+                    <ol>
+                        <li>Programador executa alteração no código e commit no repositório</li>
+                        <li>Programador atualiza comentários do código com novo número SMP</li>
+                        <li>Analista Técnico revisa alteração e atualiza P9012001-Documentation.html:
+                            <ul>
+                                <li>Seção 3: Fluxo (se lógica mudou)</li>
+                                <li>Seção 4: Inventário de Objetos (se dependências mudaram)</li>
+                                <li>Seção 5: Mapa de Dependências (se novos objetos usados)</li>
+                                <li>Seção 9: Regras de Negócio (se validações mudaram)</li>
+                                <li>Seção 11: Problemas e Riscos (se novos riscos identificados)</li>
+                            </ul>
+                        </li>
+                        <li>Gestor atualiza REPOSITORY-OVERVIEW.html com data de última alteração</li>
+                        <li>Documentação revisada é validada antes de merge</li>
+                    </ol>
+                </div>
+
+                <footer>
+                    <p>Documentação do Repositório SIAF S9013 - Batch Programs</p>
+                    <p>Visão Consolidada de Programas e Dependências</p>
+                    <p>© CHESF/Stefanini - Confidencial</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sections = [
+            { id: 'overview', title: '1. Visão Geral do Repositório' },
+            { id: 'programs', title: '2. Programas do Repositório' },
+            { id: 'dependencies', title: '3. Mapa de Dependências Consolidado' },
+            { id: 'shared-objects', title: '4. Mapa de Objetos Compartilhados' },
+            { id: 'impact-analysis', title: '5. Análise de Impacto de Mudanças' },
+            { id: 'missing-artifacts', title: '6. Artefatos Ausentes e Limitações' },
+            { id: 'standards', title: '7. Padrões de Documentação' },
+            { id: 'quick-reference', title: '8. Referência Rápida' },
+            { id: 'maintenance', title: '9. Manutenção da Documentação' }
+        ];
+
+        const toc = document.getElementById('tableOfContents');
+        sections.forEach(section => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = section.title;
+            a.onclick = (e) => {
+                e.preventDefault();
+                goToSection(section.id);
+            };
+            li.appendChild(a);
+            toc.appendChild(li);
+        });
+
+        function goToSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            const li = Array.from(toc.querySelectorAll('li')).find(l => l.querySelector('a').onclick.toString().includes(sectionId));
+            if (li) li.classList.add('active');
+            const section = sections.find(s => s.id === sectionId);
+            document.getElementById('currentLocation').textContent = ' > ' + section.title;
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            const query = e.target.value.toLowerCase();
+            if (query.length < 2) {
+                document.getElementById('searchResults').innerHTML = '';
+                return;
+            }
+            let results = [];
+            sections.forEach(section => {
+                const sectionEl = document.getElementById(section.id);
+                if (sectionEl && sectionEl.textContent.toLowerCase().includes(query)) {
+                    results.push(section);
+                }
+            });
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = results.map(r =>
+                `<div class="search-result" style="display: block !important; background: #fffacd; padding: 10px; margin: 5px 0; cursor: pointer; border-radius: 4px;" onclick="goToSection('${r.id}')">${r.title}</div>`
+            ).join('');
+        });
+    </script>
+</body>
+</html>
