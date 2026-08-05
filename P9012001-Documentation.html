@@ -440,10 +440,10 @@ SUBROUTINE MOVE-CAMPOS-NAO-NULL (linhas 2270-2580)
 
                     <h3>Objetos Locais (LOCAL USING)</h3>
                     <table>
-                        <tr><th>Objeto</th><th>Tipo</th><th>Descrição</th><th>Status</th></tr>
-                        <tr><td>L9012001</td><td>LDA</td><td>Área de dados local para P9012001</td><td>❌ Não disponível</td></tr>
-                        <tr><td>A9013Q06</td><td>LDA</td><td>Área de dados para interface N9013Q06</td><td>❌ Não disponível</td></tr>
-                        <tr><td>L9013Q13</td><td>LDA</td><td>Área de dados local para suporte</td><td>❌ Não disponível</td></tr>
+                        <tr><th>Objeto</th><th>Tipo</th><th>Finalidade</th><th>Ponto de relacionamento</th><th>Status</th></tr>
+                        <tr><td>L9012001</td><td>LDA</td><td>Área de dados local; define a estrutura de parâmetros de entrada (campos L001-*)</td><td>Linha 0420 — <code>LOCAL USING L9012001</code></td><td>❌ Não disponível</td></tr>
+                        <tr><td>A9013Q06</td><td>LDA</td><td>Área de dados de interface com N9013Q06 (NQ06-LIST-PARM, NQ06-CODG-SITC, NQ06-CODG-RETN)</td><td>Linha 0430 — <code>LOCAL USING A9013Q06</code>; usada na chamada da linha 1360</td><td>❌ Não disponível</td></tr>
+                        <tr><td>L9013Q13</td><td>LDA</td><td>Área de dados local de suporte geral ao sistema S9013 (propósito interno não confirmado no fonte)</td><td>Linha 0440 — <code>LOCAL USING L9013Q13</code></td><td>❌ Não disponível</td></tr>
                     </table>
 
                     <h3>Variáveis Locais</h3>
@@ -481,9 +481,9 @@ SUBROUTINE MOVE-CAMPOS-NAO-NULL (linhas 2270-2580)
 
                     <h3>Estruturas Adabas</h3>
                     <table>
-                        <tr><th>Objeto</th><th>Tipo</th><th>Descrição</th><th>Status</th></tr>
-                        <tr><td>D9013142-13</td><td>Arquivo Adabas</td><td>Arquivo de simulações de cobrança SIAF</td><td>❌ Definição não disponível</td></tr>
-                        <tr><td>D142-13-CADS-SIMU</td><td>View/DDM</td><td>View padrão do arquivo D9013142-13</td><td>❌ Definição não disponível</td></tr>
+                        <tr><th>Objeto</th><th>Tipo</th><th>Finalidade</th><th>Ponto de relacionamento</th><th>Status</th></tr>
+                        <tr><td>D9013142-13</td><td>Arquivo Adabas</td><td>Arquivo de simulações de cobrança SIAF; repositório físico alterado/excluído por P9012001</td><td>Identificado em WTL-IDNF-FILE (linha 1860) e no cabeçalho do programa</td><td>❌ Definição não disponível</td></tr>
+                        <tr><td>D142-13-CADS-SIMU</td><td>View/DDM</td><td>View/DDM de acesso estruturado aos registros de D9013142-13 (GET/UPDATE/DELETE)</td><td>Linha 1920 — <code>GET D142-13-CADS-SIMU</code>; UPDATE (2000); DELETE (1970)</td><td>❌ Definição não disponível</td></tr>
                     </table>
 
                     <h3>Subroutines Internas</h3>
@@ -494,21 +494,34 @@ SUBROUTINE MOVE-CAMPOS-NAO-NULL (linhas 2270-2580)
 
                     <h3>Formulários de Relatório</h3>
                     <table>
-                        <tr><th>Formulário</th><th>Uso</th><th>Status</th></tr>
-                        <tr><td>R9012001</td><td>Imagem ANTES e DEPOIS do registro</td><td>❌ Não disponível</td></tr>
+                        <tr><th>Formulário</th><th>Finalidade</th><th>Ponto de relacionamento</th><th>Status</th></tr>
+                        <tr><td>R9012001</td><td>Imprime imagem ANTES e imagem DEPOIS do registro alterado/excluído (auditoria)</td><td>Linhas 1930 e 2200 — <code>WRITE(1) NOTITLE USING FORM 'R9012001'</code></td><td>❌ Não disponível</td></tr>
                     </table>
 
                     <h3>Programas Chamados (CALLNAT)</h3>
                     <table>
-                        <tr><th>Programa</th><th>Linha</th><th>Propósito</th><th>Status</th></tr>
-                        <tr><td>N9013Q06</td><td>1360</td><td>Validar código de situação (L001-INDC-SITC-SIMU)</td><td>❌ Não disponível</td></tr>
+                        <tr><th>Programa</th><th>Finalidade</th><th>Ponto de relacionamento</th><th>Status</th><th>Interface (LDA)</th></tr>
+                        <tr><td>N9013Q06</td><td>Validar código de situação (L001-INDC-SITC-SIMU) antes de persistir</td><td>Linha 1360 — <code>CALLNAT 'N9013Q06' NQ06-LIST-PARM</code> (quando L001-INDC-SITC-SIMU ≠ 'NULL')</td><td>❌ Não disponível</td><td>A9013Q06 (NQ06-LIST-PARM)</td></tr>
+                    </table>
+
+                    <h3>Tabela Consolidada do Mapeamento de Dependências</h3>
+                    <table>
+                        <tr><th>#</th><th>Objeto</th><th>Tipo</th><th>Finalidade</th><th>Ponto de relacionamento com P9012001</th><th>Status</th></tr>
+                        <tr><td>1</td><td>P9012001</td><td>Programa</td><td>Alterar/excluir registros via ISN no arquivo D9013142-13</td><td>Programa analisado (objeto raiz)</td><td>✅ Disponível</td></tr>
+                        <tr><td>2</td><td>L9012001</td><td>LDA</td><td>Estrutura de parâmetros de entrada (L001-*)</td><td>LOCAL USING (linha 0420)</td><td>❌ Não disponível</td></tr>
+                        <tr><td>3</td><td>A9013Q06</td><td>LDA</td><td>Interface de comunicação com N9013Q06</td><td>LOCAL USING (linha 0430)</td><td>❌ Não disponível</td></tr>
+                        <tr><td>4</td><td>L9013Q13</td><td>LDA</td><td>Suporte geral S9013</td><td>LOCAL USING (linha 0440)</td><td>❌ Não disponível</td></tr>
+                        <tr><td>5</td><td>N9013Q06</td><td>Programa</td><td>Validação do código de situação</td><td>CALLNAT (linha 1360)</td><td>❌ Não disponível</td></tr>
+                        <tr><td>6</td><td>R9012001</td><td>Formulário</td><td>Relatório ANTES/DEPOIS</td><td>WRITE USING FORM (linhas 1930, 2200)</td><td>❌ Não disponível</td></tr>
+                        <tr><td>7</td><td>D9013142-13</td><td>Arquivo Adabas</td><td>Arquivo físico de simulações de cobrança</td><td>Referenciado via WTL-IDNF-FILE / view</td><td>❌ Não disponível</td></tr>
+                        <tr><td>8</td><td>D142-13-CADS-SIMU</td><td>View/DDM</td><td>Acesso GET/UPDATE/DELETE aos registros</td><td>GET/UPDATE/DELETE (linhas 1920–2050)</td><td>❌ Não disponível</td></tr>
                     </table>
 
                     <h3>Resumo de Objetos</h3>
                     <ul>
-                        <li>✅ <strong>Disponíveis:</strong> P9012001 (o próprio programa)</li>
-                        <li>❌ <strong>Não disponíveis:</strong> 3 LDAs, 1 arquivo Adabas, 1 view, 1 programa chamado, 1 formulário, 1 data definition</li>
-                        <li><strong>Total de objetos referenciados:</strong> 9</li>
+                        <li>✅ <strong>Disponíveis:</strong> 1 — P9012001 (o próprio programa)</li>
+                        <li>❌ <strong>Não disponíveis:</strong> 7 — L9012001, A9013Q06, L9013Q13, N9013Q06, R9012001, D9013142-13, D142-13-CADS-SIMU</li>
+                        <li><strong>Total de objetos referenciados:</strong> 8</li>
                     </ul>
                 </div>
 
@@ -519,17 +532,27 @@ SUBROUTINE MOVE-CAMPOS-NAO-NULL (linhas 2270-2580)
                     <h3>Dependências Externas Diretas</h3>
                     <div class="flow-diagram">P9012001
 ├── LOCAL USING L9012001 ........................ ❌ LDA (não disponível)
+│   └── Define: Estrutura de parâmetros de entrada (L001-*)
+│
 ├── LOCAL USING A9013Q06 ........................ ❌ LDA (não disponível)
+│   └── Define: Interface de comunicação com N9013Q06 (NQ06-LIST-PARM, NQ06-CODG-SITC, NQ06-CODG-RETN)
+│
 ├── LOCAL USING L9013Q13 ........................ ❌ LDA (não disponível)
+│   └── Define: Estrutura de suporte geral (propósito desconhecido)
 │
 ├── GET/UPDATE/DELETE D142-13-CADS-SIMU ........ ❌ View/DDM (não disponível)
-│   └── Arquivo: D9013142-13 ................... ❌ Definição não disponível
+│   └── Operações: Leitura, atualização, deleção de registros de simulação
+│   └── Arquivo subjacente: D9013142-13 ........ ❌ Arquivo Adabas (não disponível)
 │
-├── CALLNAT 'N9013Q06' .......................... ❌ Programa (não disponível)
+├── CALLNAT 'N9013Q06' .......................... ❌ Programa Natural (não disponível)
+│   └── Propósito: Validar código de situação (L001-INDC-SITC-SIMU)
 │   └── Interface: NQ06-LIST-PARM (via LDA A9013Q06)
+│   └── Ponto de chamada: Linha 1360 (quando L001-INDC-SITC-SIMU ≠ 'NULL')
 │
-└── FORM 'R9012001' ............................ ❌ Relatório (não disponível)
-    └── Usado em WRITE(1) para imagens ANTES/DEPOIS
+└── FORM 'R9012001' ............................ ❌ Formulário de Relatório (não disponível)
+    └── Propósito: Imprimir imagem ANTES e imagem DEPOIS do registro
+    └── Pontos de uso: Linhas 1930 (antes) e 2200 (depois)
+    └── Dados usados: Registro D142-13-CADS-SIMU com variáveis WTL-*
                     </div>
 
                     <h3>Dependências Inversas (Programs que usam D9013142-13)</h3>
@@ -539,13 +562,14 @@ SUBROUTINE MOVE-CAMPOS-NAO-NULL (linhas 2270-2580)
 
                     <h3>Análise de Impacto de Dependências Ausentes</h3>
                     <table>
-                        <tr><th>Dependência</th><th>Impacto na Análise</th><th>Seções Afetadas</th></tr>
-                        <tr><td>L9012001</td><td>Não é possível confirmar todos os campos da estrutura de entrada; nomes e tipos de campo estão inferidos dos comentários do código</td><td>Inventário de Objetos, Regras de Negócio, Matriz CRUD</td></tr>
-                        <tr><td>A9013Q06</td><td>Não é possível confirmar a interface com N9013Q06; estrutura de retorno (NQ06-CODG-RETN) é assumida ser um code de retorno numérico</td><td>Fluxo de Execução, Regras de Validação</td></tr>
-                        <tr><td>L9013Q13</td><td>Objetivo desconhecido; presumivelmente suporte geral</td><td>Inventário de Objetos</td></tr>
-                        <tr><td>N9013Q06</td><td>Não é possível validar que a chamada está correta ou entender exceções/códigos de erro alternativos</td><td>Regras de Negócio (validação L001-INDC-SITC-SIMU), Análise de Risco</td></tr>
-                        <tr><td>D142-13-CADS-SIMU / D9013142-13</td><td>Não é possível confirmar campos, tipos, constraints, índices, ou regras de integridade do arquivo; nomes de campo estão inferidos do código-fonte</td><td>Matriz CRUD, Inventário de Objetos, Análise de Performance</td></tr>
-                        <tr><td>R9012001</td><td>Não é possível confirmar formato de saída, campos impressos ou restrições de layout</td><td>Saída do Programa, Análise de Performance</td></tr>
+                        <tr><th>Dependência</th><th>Finalidade</th><th>Ponto de relacionamento</th><th>Impacto na Análise</th></tr>
+                        <tr><td>L9012001</td><td>Estrutura de parâmetros de entrada (L001-*)</td><td>LOCAL USING (linha 0420)</td><td>Campos de entrada inferidos dos comentários; tipos/tamanhos não confirmados</td></tr>
+                        <tr><td>A9013Q06</td><td>Interface NQ06-* com N9013Q06</td><td>LOCAL USING (linha 0430); CALLNAT (linha 1360)</td><td>Estrutura de retorno (NQ06-CODG-RETN) assumida como código numérico</td></tr>
+                        <tr><td>L9013Q13</td><td>Suporte geral S9013</td><td>LOCAL USING (linha 0440)</td><td>Propósito interno desconhecido; impacto acessório não confirmado</td></tr>
+                        <tr><td>N9013Q06</td><td>Validação de código de situação</td><td>CALLNAT (linha 1360)</td><td>Lógica interna e códigos de erro alternativos não confirmados</td></tr>
+                        <tr><td>D9013142-13</td><td>Arquivo físico de simulações de cobrança</td><td>Via WTL-IDNF-FILE / view D142-13-CADS-SIMU</td><td>Campos, índices e constraints não confirmados</td></tr>
+                        <tr><td>D142-13-CADS-SIMU</td><td>View/DDM de acesso aos registros</td><td>GET/UPDATE/DELETE (linhas 1920–2050)</td><td>Mapeamento exato view↔arquivo não confirmado</td></tr>
+                        <tr><td>R9012001</td><td>Relatório ANTES/DEPOIS</td><td>WRITE USING FORM (linhas 1930, 2200)</td><td>Layout e campos impressos não confirmados</td></tr>
                     </table>
 
                     <h3>Dependências de Runtime</h3>
@@ -589,54 +613,67 @@ SUBROUTINE MOVE-CAMPOS-NAO-NULL (linhas 2270-2580)
                     <h2>6. Grafo de Chamadas</h2>
 
                     <h3>Visão Geral</h3>
-                    <div class="flow-diagram">P9012001
-├── Entrada
-│   └── 15 parâmetros INPUT
+                    <div class="flow-diagram">P9012001 (Programa principal)
+│
+├── Entrada (15 parâmetros)
+│   └── Parâmetros definidos em LDA L9012001
+│
+├── Estruturas de Dados (LOCAL USING)
+│   ├── L9012001 ..................... Define campos de entrada (L001-*)
+│   ├── A9013Q06 ..................... Define interface com N9013Q06 (NQ06-*)
+│   └── L9013Q13 ..................... Define estrutura de suporte geral
 │
 ├── Processamento
-│   ├── Validação local
-│   │   └── DECIDE FOR EVERY CONDITION (inline)
+│   ├── Validação local (linhas 0870-1720)
+│   │   └── DECIDE FOR EVERY CONDITION (13 validações)
 │   │
 │   ├── Chamadas Externas
-│   │   └── CALLNAT 'N9013Q06'
-│   │       └── L001-INDC-SITC-SIMU (L001-* definido em A9013Q06)
+│   │   └── CALLNAT 'N9013Q06' (linha 1360) .... Validar situação
+│   │       └── Via LDA A9013Q06 (interface NQ06-LIST-PARM)
 │   │
-│   ├── Operações Adabas
+│   ├── Operações Adabas (em D142-13-CADS-SIMU do arquivo D9013142-13)
 │   │   ├── GET D142-13-CADS-SIMU (linha 1920)
-│   │   ├── UPDATE (G1.) (linha 2000)
-│   │   ├── DELETE (G1.) (linha 1970)
-│   │   ├── END TRANSACTION (linha 2030)
-│   │   └── BACKOUT TRANSACTION (linha 2050)
+│   │   ├── UPDATE (G1.) (linha 2000) [condicionado a FUNCAO='ALTERAR']
+│   │   ├── DELETE (G1.) (linha 1970) [condicionado a FUNCAO='EXCLUIR']
+│   │   ├── END TRANSACTION (linha 2030) [se EFETIVA='SIM']
+│   │   └── BACKOUT TRANSACTION (linha 2050) [se EFETIVA='NAO']
 │   │
 │   ├── Subroutine Interna
 │   │   └── PERFORM MOVE-CAMPOS-NAO-NULL (linha 1990)
-│   │       └── Série de DECIDE FOR EVERY CONDITION (2290-2560)
+│   │       └── Atualiza campos não-NULL em D142-13-CADS-SIMU (linhas 2270-2580)
 │   │
-│   ├── Saída
-│   │   ├── WRITE(1) USING FORM R9012001 (linha 1930 - ANTES)
-│   │   ├── WRITE(1) USING FORM R9012001 (linha 2200 - DEPOIS)
-│   │   └── NEWPAGE(1) (linha 2190)
+│   ├── Saída Formatada (via formulário R9012001)
+│   │   ├── WRITE(1) USING FORM 'R9012001' (linha 1930) .... Imagem ANTES
+│   │   ├── NEWPAGE(1) (linha 2190)
+│   │   └── WRITE(1) USING FORM 'R9012001' (linha 2200) .... Imagem DEPOIS
 │   │
 │   └── Tratamento de Erro
+│       ├── Acumulação em WFL-TEM-ERRO
 │       ├── WRITE (mensagens de erro)
-│       ├── STOP (se interativo)
+│       ├── STOP (se *DEVICE = 'VIDEO')
 │       └── TERMINATE 133 (se batch)
 │
 └── Saída
-    └── Relatório FORM R9012001
+    └── Relatório FORM R9012001 (imagens ANTES/DEPOIS)
 
 Legenda:
   ✅ Verde: Disponível no repositório
   ❌ Vermelho: Não disponível no repositório
+  Objetos referenciados: 8 (P9012001 + L9012001 + A9013Q06 + L9013Q13 + N9013Q06 + R9012001 + D9013142-13 + D142-13-CADS-SIMU)
                     </div>
 
                     <h3>Profundidade de Chamadas</h3>
                     <table>
-                        <tr><th>Nível</th><th>Elemento</th><th>Tipo</th><th>Disponível</th></tr>
-                        <tr><td>0</td><td>P9012001</td><td>Programa</td><td>✅</td></tr>
-                        <tr><td>1</td><td>N9013Q06</td><td>CALLNAT</td><td>❌</td></tr>
-                        <tr><td>1</td><td>R9012001</td><td>FORM</td><td>❌</td></tr>
-                        <tr><td>1</td><td>MOVE-CAMPOS-NAO-NULL</td><td>SUBROUTINE</td><td>✅</td></tr>
+                        <tr><th>Nível</th><th>Elemento</th><th>Tipo</th><th>Finalidade / relacionamento</th><th>Disponível</th></tr>
+                        <tr><td>0</td><td>P9012001</td><td>Programa</td><td>Programa raiz; orquestra validação, acesso Adabas e relatório</td><td>✅</td></tr>
+                        <tr><td>1</td><td>L9012001</td><td>LDA</td><td>LOCAL USING (0420) — parâmetros de entrada L001-*</td><td>❌</td></tr>
+                        <tr><td>1</td><td>A9013Q06</td><td>LDA</td><td>LOCAL USING (0430) — interface NQ06-* para N9013Q06</td><td>❌</td></tr>
+                        <tr><td>1</td><td>L9013Q13</td><td>LDA</td><td>LOCAL USING (0440) — suporte geral S9013</td><td>❌</td></tr>
+                        <tr><td>1</td><td>N9013Q06</td><td>CALLNAT</td><td>Linha 1360 — valida L001-INDC-SITC-SIMU via A9013Q06</td><td>❌</td></tr>
+                        <tr><td>1</td><td>D142-13-CADS-SIMU</td><td>View/DDM</td><td>GET/UPDATE/DELETE (1920–2050) sobre D9013142-13</td><td>❌</td></tr>
+                        <tr><td>1</td><td>D9013142-13</td><td>Arquivo Adabas</td><td>Arquivo físico acessado via D142-13-CADS-SIMU</td><td>❌</td></tr>
+                        <tr><td>1</td><td>R9012001</td><td>FORM</td><td>WRITE USING FORM (1930, 2200) — imagens ANTES/DEPOIS</td><td>❌</td></tr>
+                        <tr><td>1</td><td>MOVE-CAMPOS-NAO-NULL</td><td>SUBROUTINE</td><td>PERFORM (1990) — move campos não-NULL para o registro</td><td>✅</td></tr>
                     </table>
 
                     <h3>Chamadas Externas</h3>
@@ -738,19 +775,25 @@ END-IF                        <p><strong>Retorno esperado:</strong> NQ06-CODG-RE
 
                     <h3>Impacto de P9012001 em Sistemas Downstream</h3>
                     <table>
-                        <tr><th>Dependência</th><th>Tipo de Impacto</th><th>Nível de Crítica</th><th>Comentários</th></tr>
-                        <tr><td>D9013142-13 (arquivo Adabas)</td><td>Leitura, Atualização, Deleção</td><td>🔴 Alta</td><td>Alterações/exclusões por P9012001 podem afetar programas que leem este arquivo</td></tr>
-                        <tr><td>N9013Q06 (validação)</td><td>Chamada condicional</td><td>🟡 Média</td><td>Indisponibilidade causa falha de validação; campo L001-INDC-SITC-SIMU não pode ser validado</td></tr>
-                        <tr><td>R9012001 (relatório)</td><td>Saída formatada</td><td>🟡 Média</td><td>Indisponibilidade impede impressão ANTES/DEPOIS</td></tr>
-                        <tr><td>L9012001, A9013Q06, L9013Q13 (LDAs)</td><td>Estruturas de dados</td><td>🟡 Média</td><td>Indisponibilidade afeta definição de parâmetros</td></tr>
+                        <tr><th>Dependência</th><th>Ponto de relacionamento</th><th>Criticidade</th><th>Descrição de Finalidade</th><th>Impacto de Indisponibilidade</th></tr>
+                        <tr><td><strong>D9013142-13</strong> (Arquivo Adabas)</td><td>Acesso via view D142-13-CADS-SIMU (GET/UPDATE/DELETE)</td><td>🔴 Alta</td><td>Arquivo de simulações de cobrança SIAF; único repositório de registros afetados por P9012001</td><td>Alterações/exclusões por P9012001 acarretam inconsistência para programas que leem este arquivo sem sincronização</td></tr>
+                        <tr><td><strong>D142-13-CADS-SIMU</strong> (View/DDM)</td><td>Linhas 1920–2050 (GET/UPDATE/DELETE)</td><td>🔴 Alta</td><td>View padrão de D9013142-13; interface de acesso estruturado aos registros</td><td>Se view não reconhecer novos campos de D9013142-13, P9012001 pode falhar em UPDATE</td></tr>
+                        <tr><td><strong>N9013Q06</strong> (Programa de validação)</td><td>CALLNAT linha 1360 (condicional)</td><td>🟡 Média</td><td>Validador de códigos de situação; desacopla lógica de validação de P9012001</td><td>Indisponibilidade impede validação de L001-INDC-SITC-SIMU; batch falha quando este campo é fornecido</td></tr>
+                        <tr><td><strong>R9012001</strong> (Formulário/Relatório)</td><td>WRITE USING FORM linhas 1930 e 2200</td><td>🟡 Média</td><td>Imprime imagens ANTES e DEPOIS do registro alterado/deletado; essencial para auditoria</td><td>Indisponibilidade impede impressão ANTES/DEPOIS; rastreabilidade e compliance prejudicados</td></tr>
+                        <tr><td><strong>L9012001</strong> (LDA)</td><td>LOCAL USING linha 0420</td><td>🟡 Média</td><td>Define estrutura de entrada (campos L001-*); fonte de verdade para validação</td><td>Indisponibilidade afeta clareza de tipos/nomes; validação pode estar incorreta se campos mudaram</td></tr>
+                        <tr><td><strong>A9013Q06</strong> (LDA)</td><td>LOCAL USING linha 0430; interface da linha 1360</td><td>🟡 Média</td><td>Define estrutura NQ06-LIST-PARM para comunicação bidirecional com N9013Q06</td><td>Indisponibilidade impede compreensão de interface; chamada CALLNAT pode usar campos inválidos</td></tr>
+                        <tr><td><strong>L9013Q13</strong> (LDA)</td><td>LOCAL USING linha 0440</td><td>🟢 Baixa</td><td>Propósito desconhecido; presumivelmente suporte geral ao sistema S9013</td><td>Indisponibilidade desconhecida; possível impacto em funcionalidade acessória não documentada</td></tr>
                     </table>
 
                     <h3>Cenários de Falha e Impactos</h3>
                     <ul>
-                        <li><strong>N9013Q06 indisponível:</strong> Campo L001-INDC-SITC-SIMU não é validado corretamente; risco de dados inválidos no banco</li>
-                        <li><strong>R9012001 indisponível:</strong> Imagens ANTES/DEPOIS não são impressas; auditoria prejudicada</li>
-                        <li><strong>D9013142-13 indisponível:</strong> P9012001 não consegue executar; batch interrompido com erro</li>
-                        <li><strong>L9012001 indisponível:</strong> Estrutura de parâmetros não está clara; risco de interpretação incorreta</li>
+                        <li><strong>D9013142-13 indisponível:</strong> P9012001 não consegue executar GET; batch interrompido com erro fatal</li>
+                        <li><strong>D142-13-CADS-SIMU indisponível:</strong> P9012001 não consegue acessar view de simulações; batch interrompido com erro no GET/UPDATE/DELETE</li>
+                        <li><strong>N9013Q06 indisponível:</strong> Campo L001-INDC-SITC-SIMU não é validado corretamente quando fornecido; risco de aceitação de códigos inválidos e dados corrompidos no banco</li>
+                        <li><strong>R9012001 indisponível:</strong> Imagens ANTES/DEPOIS não são impressas; perda total de auditoria; compliance prejudicado</li>
+                        <li><strong>L9012001 indisponível:</strong> Estrutura de parâmetros não está clara; risco de interpretação incorreta de tipos de dados e tamanhos de campos</li>
+                        <li><strong>A9013Q06 indisponível:</strong> Interface com N9013Q06 não está documentada; chamada CALLNAT pode usar campos inválidos ou desalinhados</li>
+                        <li><strong>L9013Q13 indisponível:</strong> Estrutura de suporte geral não está clara; possível perda de funcionalidade acessória não documentada</li>
                     </ul>
                 </div>
 
@@ -853,7 +896,7 @@ END-IF                        <p><strong>Retorno esperado:</strong> NQ06-CODG-RE
                     <h3>Problemas Detectados</h3>
                     <table>
                         <tr><th>#</th><th>Problema</th><th>Severidade</th><th>Impacto</th><th>Recomendação</th></tr>
-                        <tr><td>P-001</td><td>Dependências críticas não disponíveis (L9012001, A9013Q06, L9013Q13, N9013Q06, R9012001, D9013142-13)</td><td>🔴 Crítica</td><td>Impossível validar completamente o programa; análise baseada em inferência</td><td>Recuperar ou documentar estruturas de dados</td></tr>
+                        <tr><td>P-001</td><td>Dependências críticas não disponíveis localmente: 3 LDAs (L9012001, A9013Q06, L9013Q13), 1 arquivo Adabas (D9013142-13), 1 view (D142-13-CADS-SIMU), 1 programa (N9013Q06), 1 formulário (R9012001)</td><td>🔴 Crítica</td><td>Impossível validar completamente o programa; análise baseada em inferência de código-fonte e comentários</td><td>Recuperar ou documentar estruturas de dados de cada dependência; em especial: estrutura de L9012001 (campos L001-*), interface A9013Q06/N9013Q06, layout de R9012001</td></tr>
                         <tr><td>P-002</td><td>Validação de data não verifica ano válido (apenas formato YYYYMMDD)</td><td>🟡 Média</td><td>Datas inválidas como 20991399 passam na validação</td><td>Adicionar range check de ano e mês</td></tr>
                         <tr><td>P-003</td><td>Validação numérica de valores com decimais usa string manipulation (EXAMINE, move right)</td><td>🟡 Média</td><td>Frágil; vulnerável a espaços/vírgulas em posições inesperadas</td><td>Usar função de validação numérica nativa</td></tr>
                         <tr><td>P-004</td><td>N9013Q06 chamado sem tratamento de erro (além de code de retorno)</td><td>🟡 Média</td><td>Exceção em N9013Q06 não é capturada; programa pode parar inesperadamente</td><td>Adicionar ON ERROR handling</td></tr>
@@ -1052,50 +1095,118 @@ Resposta (201 Created - Real):
                     </div>
 
                     <h3>Artefatos Críticos Não Fornecidos</h3>
+                    <p><strong>Total de 8 objetos referenciados; 7 não disponíveis no repositório (87,5% não disponível)</strong></p>
                     <table>
-                        <tr><th>Artefato</th><th>Tipo</th><th>Esperado em</th><th>Impacto de Ausência</th><th>Status de Análise</th></tr>
-                        <tr><td>L9012001</td><td>LDA (Local Data Area)</td><td>Codigo-natural/L9012001.* ou similar</td><td>Campos de entrada não confirmados; nomes/tipos inferidos de comentários</td><td>❌ Inferência</td></tr>
-                        <tr><td>A9013Q06</td><td>LDA</td><td>Codigo-natural/A9013Q06.*</td><td>Interface com N9013Q06 não confirmada; NQ06-* fields não documentados</td><td>❌ Inferência</td></tr>
-                        <tr><td>L9013Q13</td><td>LDA</td><td>Codigo-natural/L9013Q13.*</td><td>Propósito desconhecido; presumivelmente suporte</td><td>❌ Inferência</td></tr>
-                        <tr><td>N9013Q06</td><td>Programa Natural</td><td>Codigo-natural/N9013Q06.NSP</td><td>Lógica de validação de código de situação não documentada; assumido return 0=válido</td><td>❌ Inferência</td></tr>
-                        <tr><td>R9012001</td><td>Formulário/Relatório</td><td>Relatorios/ ou Forms/</td><td>Formato de saída ANTES/DEPOIS desconhecido; presumido ser formulário padrão</td><td>❌ Inferência</td></tr>
-                        <tr><td>D9013142-13 (DDM/View)</td><td>Data Definition</td><td>Codigo-natural/ ou metadata/</td><td>Campos do arquivo não confirmados; nomes inferidos de P9012001</td><td>❌ Inferência</td></tr>
+                        <tr><th>Artefato</th><th>Tipo</th><th>Esperado em</th><th>Impacto de Ausência</th><th>Status de Análise</th><th>Prioridade</th></tr>
+                        <tr><td>L9012001</td><td>LDA (Local Data Area)</td><td>Codigo-natural/L9012001.*</td><td>Campos de entrada L001-* não confirmados; nomes/tipos/tamanhos inferidos de comentários do código</td><td>❌ Inferência</td><td>🔴 Alta</td></tr>
+                        <tr><td>A9013Q06</td><td>LDA</td><td>Codigo-natural/A9013Q06.*</td><td>Interface com N9013Q06 (NQ06-LIST-PARM, NQ06-CODG-SITC, NQ06-CODG-RETN) não confirmada</td><td>❌ Inferência</td><td>🔴 Alta</td></tr>
+                        <tr><td>L9013Q13</td><td>LDA</td><td>Codigo-natural/L9013Q13.*</td><td>Propósito completamente desconhecido; presumivelmente suporte geral</td><td>❌ Inferência</td><td>🟡 Média</td></tr>
+                        <tr><td>N9013Q06</td><td>Programa Natural</td><td>Codigo-natural/N9013Q06.NSP</td><td>Lógica de validação de código de situação não documentada; convenção de retorno assumida (0=válido)</td><td>❌ Inferência</td><td>🔴 Alta</td></tr>
+                        <tr><td>R9012001</td><td>Formulário/Relatório</td><td>Relatorios/ ou Forms/</td><td>Formato de saída ANTES/DEPOIS desconhecido; campos impressos não documentados; presumido ser formulário padrão</td><td>❌ Inferência</td><td>🔴 Alta</td></tr>
+                        <tr><td>D9013142-13</td><td>Arquivo Adabas</td><td>Metadata ou Adabas catalog</td><td>Campos, tipos, índices, constraints do arquivo não confirmados; nomes inferidos de P9012001</td><td>❌ Inferência</td><td>🔴 Alta</td></tr>
+                        <tr><td>D142-13-CADS-SIMU</td><td>View/DDM</td><td>Metadata ou Adabas catalog</td><td>Mapeamento entre campos da view e arquivo D9013142-13 desconhecido; estrutura presumida</td><td>❌ Inferência</td><td>🔴 Alta</td></tr>
                     </table>
 
                     <h3>Impacto por Seção da Documentação</h3>
                     <table>
-                        <tr><th>Seção</th><th>Dependências Ausentes</th><th>Grau de Certeza</th></tr>
-                        <tr><td>Resumo Executivo</td><td>Nenhuma - Meta-análise</td><td>✅ 100%</td></tr>
-                        <tr><td>Resumo Técnico</td><td>Nenhuma - Análise de código P9012001</td><td>✅ 100%</td></tr>
-                        <tr><td>Fluxo de Execução</td><td>Nenhuma - Análise de P9012001</td><td>✅ 100%</td></tr>
-                        <tr><td>Inventário de Objetos</td><td>L9012001, A9013Q06, L9013Q13, D9013142-13</td><td>🟡 70%</td></tr>
-                        <tr><td>Dependências</td><td>Todas as acima</td><td>🟡 60%</td></tr>
-                        <tr><td>Grafo de Chamadas</td><td>N9013Q06 (lógica interna), R9012001 (formato), A9013Q06 (interface)</td><td>🟡 75%</td></tr>
-                        <tr><td>Matriz CRUD</td><td>D9013142-13 (campos, constraints), A9013Q06 (interface N9013Q06)</td><td>🟡 70%</td></tr>
-                        <tr><td>Mapa de Impacto</td><td>Todos os programas que usam D9013142-13</td><td>🔴 20%</td></tr>
-                        <tr><td>Regras de Negócio</td><td>N9013Q06 (lógica de validação código de situação)</td><td>🟡 90%</td></tr>
-                        <tr><td>Performance</td><td>R9012001 (layout/volume), D9013142-13 (índices)</td><td>🟡 75%</td></tr>
-                        <tr><td>Problemas & Riscos</td><td>Impacto de dependências ausentes desconhecido</td><td>🟡 80%</td></tr>
-                        <tr><td>Refatoração</td><td>Nenhuma — recomendações genéricas</td><td>✅ 90%</td></tr>
-                        <tr><td>Modernização</td><td>Todas as acima — mapeamento depende de estruturas reais</td><td>🟡 65%</td></tr>
+                        <tr><th>Seção</th><th>Objetos Documentados</th><th>Objetos Ausentes</th><th>Grau de Certeza</th></tr>
+                        <tr><td>Resumo Executivo</td><td>P9012001</td><td>Nenhuma - Meta-análise</td><td>✅ 100%</td></tr>
+                        <tr><td>Resumo Técnico</td><td>P9012001</td><td>Nenhuma - Análise de código P9012001</td><td>✅ 100%</td></tr>
+                        <tr><td>Fluxo de Execução</td><td>P9012001</td><td>Nenhuma - Análise de P9012001</td><td>✅ 100%</td></tr>
+                        <tr><td>4. Inventário de Objetos</td><td>Todos os 8 (L9012001, A9013Q06, L9013Q13, N9013Q06, R9012001, D9013142-13, D142-13-CADS-SIMU, P9012001)</td><td>Definições internas (campos, tipos)</td><td>🟡 85%</td></tr>
+                        <tr><td>5. Mapa de Dependências</td><td>Todos os 8 com propósito/relacionamento</td><td>Lógica interna de N9013Q06, layout de R9012001</td><td>🟡 80%</td></tr>
+                        <tr><td>6. Grafo de Chamadas</td><td>Todos os 8 com pontos de entrada</td><td>Código de N9013Q06, template de R9012001</td><td>🟡 82%</td></tr>
+                        <tr><td>7. Matriz CRUD</td><td>D9013142-13, D142-13-CADS-SIMU, operações</td><td>Constraints, índices, cardinality</td><td>🟡 75%</td></tr>
+                        <tr><td>8. Mapa de Impacto (Inversas)</td><td>Impacto de P9012001 em D9013142-13, N9013Q06, R9012001</td><td>Programas que chamam P9012001 (não disponíveis no repo)</td><td>🔴 50%</td></tr>
+                        <tr><td>9. Regras de Negócio</td><td>BR-001 a BR-027 (validações, transações)</td><td>Lógica interna de N9013Q06</td><td>🟡 95%</td></tr>
+                        <tr><td>10. Performance</td><td>Análise de operações críticas</td><td>Índices D9013142-13, volume esperado R9012001</td><td>🟡 80%</td></tr>
+                        <tr><td>11. Problemas & Riscos</td><td>7 problemas, 5 riscos operacionais, 3 riscos segurança, 3 riscos manutenção</td><td>Impacto real de dependências ausentes</td><td>🟡 85%</td></tr>
+                        <tr><td>12. Refatoração</td><td>12 oportunidades de refatoração</td><td>Nenhuma - recomendações genéricas</td><td>✅ 100%</td></tr>
+                        <tr><td>13. Modernização</td><td>Arquitetura alvo, mapeamento Quarkus, esforço estimado</td><td>Estrutura real de L9012001, A9013Q06, N9013Q06, R9012001</td><td>🟡 70%</td></tr>
                     </table>
+                    <p><strong>Resumo:</strong> Documentação é ~85% confiável para análise técnica do P9012001 (fluxo, validação, estrutura) e ~50% confiável para análise de impacto (dependências inversas). Todos os 8 objetos referenciados estão documentados nominalmente com propósito, relacionamento e impacto identificado.</p>
 
                     <h3>Como Aumentar a Confiança da Análise</h3>
+                    <p><strong>Status Atual:</strong> Todos os 8 objetos são nominalmente documentados com propósito e relacionamento. O que falta são as definições internas (estrutura de campos, tipos, tamanhos, índices, constrains).</p>
                     <ol>
-                        <li><strong>Recuperar L9012001:</strong> Localizar arquivo LDA; confirmar campos de entrada e tipos. Espera-se conter INPUT section ou LOCAL USING L001-*.</li>
-                        <li><strong>Recuperar A9013Q06:</strong> Confirmar campos NQ06-LIST-PARM, NQ06-CODG-SITC, NQ06-CODG-RETN e convenção de retorno.</li>
-                        <li><strong>Recuperar N9013Q06:</strong> Confirmar propósito, parâmetros de entrada/saída, códigos de erro possíveis.</li>
-                        <li><strong>Recuperar ou testar R9012001:</strong> Confirmar campos impressos, layout, se suporta D142-13-CADS-SIMU.</li>
-                        <tr><td><strong>Recuperar definição D9013142-13:</strong> Confirmar campos, tipos, índices, constraints, e qual view é D142-13-CADS-SIMU.</td></tr>
-                        <li><strong>Executar programa em sandbox:</strong> Testar com valores de exemplo (NULL e não-NULL) para validar fluxo real.</li>
-                        <li><strong>Localizar programas dependentes:</strong> Buscar quem chama P9012001 ou acessa D9013142-13 (impacto reverso).</li>
+                        <li><strong>Recuperar L9012001 (LDA):</strong> Localizar arquivo e confirmar:
+                            <ul>
+                                <li>Campos L001-* exatos (14 campos esperados conforme código)</li>
+                                <li>Tipos de dados (numéricos, alfanuméricos)</li>
+                                <li>Tamanhos (N0002, A0001, N0010, N0014, N0003, N15,2, A0002, N0009, N0008, A0002)</li>
+                                <li>Se há outros campos não usados por P9012001</li>
+                            </ul>
+                        </li>
+                        <li><strong>Recuperar A9013Q06 (LDA):</strong> Confirmar:
+                            <ul>
+                                <li>Campos da estrutura NQ06-LIST-PARM (interface de comunicação)</li>
+                                <li>Campo NQ06-CODG-SITC (entrada: código de situação a validar)</li>
+                                <li>Campo NQ06-CODG-RETN (retorno: 0=válido, outro=inválido)</li>
+                                <li>Outros campos auxiliares</li>
+                            </ul>
+                        </li>
+                        <li><strong>Recuperar L9013Q13 (LDA):</strong> Confirmar:
+                            <ul>
+                                <li>Propósito exato da LDA</li>
+                                <li>Quais campos são realmente usados por P9012001</li>
+                                <li>Se é utilizada em outros programas do sistema</li>
+                            </ul>
+                        </li>
+                        <li><strong>Recuperar N9013Q06 (Programa Natural):</strong> Confirmar:
+                            <ul>
+                                <li>Propósito: validação de código de situação? Ou outra função?</li>
+                                <li>Parâmetros de entrada/saída esperados</li>
+                                <li>Códigos de erro possíveis (além de 0=sucesso)</li>
+                                <li>Comportamento em caso de código inválido (aceita com warning, ou aborta?)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Recuperar R9012001 (Formulário/Relatório):</strong> Confirmar:
+                            <ul>
+                                <li>Campos impressos (ANTES e DEPOIS)</li>
+                                <li>Layout físico (linhas, colunas, fontes)</li>
+                                <li>Se suporta todos os campos de D142-13-CADS-SIMU ou apenas subset</li>
+                                <li>Variáveis disponíveis (WTL-STTS-REGS, WTL-USER-RESP, etc.)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Recuperar definição D9013142-13 (Arquivo Adabas):</strong> Confirmar:
+                            <ul>
+                                <li>Todos os campos e tipos</li>
+                                <li>Índices (ISN é index nativo; há outros?)</li>
+                                <li>Constraints (NOT NULL, valores default, etc.)</li>
+                                <li>Histórico de alterações (mudança SMP-0405/2012 para NUMR-DOCM-COBR N8→N9 confirmada)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Recuperar definição D142-13-CADS-SIMU (View/DDM):</strong> Confirmar:
+                            <ul>
+                                <li>Mapeamento de campos: quais campos de D9013142-13 aparecem na view?</li>
+                                <li>Se há campos computados ou renomeados</li>
+                                <li>Se há subcondições de acesso (segurança)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Executar programa em sandbox:</strong> Testar com valores de exemplo:
+                            <ul>
+                                <li>Teste com EFETIVA=NAO (simulação) e EFETIVA=SIM (confirmação)</li>
+                                <li>Teste com campos NULL e não-NULL para validar padrão NULL</li>
+                                <li>Teste de validação: fornecer valores inválidos (data malformada, valor não-numérico, código inválido) e verificar comportamento</li>
+                                <li>Teste de impressão: verificar que ANTES/DEPOIS são impressos com sucesso</li>
+                            </ul>
+                        </li>
+                        <li><strong>Localizar programas dependentes:</strong> Buscar:
+                            <ul>
+                                <li>Quais programas chamam P9012001? (impacto reverso / dependências inversas)</li>
+                                <li>Quais programas acessam D9013142-13 além de P9012001?</li>
+                                <li>Quais programas chamam N9013Q06?</li>
+                                <li>Quais programas usam R9012001?</li>
+                            </ul>
+                        </li>
                     </ol>
 
                     <h3>Conclusão Geral</h3>
                     <p>
-                        Esta documentação é <strong>75% confiável para análise técnica</strong> (fluxo, validação, estrutura) e <strong>50% confiável para análise de impacto</strong> (dependências, regras exatas, modernização).
+                        Esta documentação é <strong>~85% confiável para análise técnica de P9012001</strong> (fluxo, validação, estrutura, regras de negócio) e <strong>~80% confiável para mapeamento de dependências</strong>.
+                        O mapeamento de dependências do fonte lista <strong>8 objetos referenciados</strong> (P9012001, L9012001, A9013Q06, L9013Q13, N9013Q06, R9012001, D9013142-13, D142-13-CADS-SIMU), todos presentes nas seções 4, 5, 6 e 8 com identificação, ponto de relacionamento e finalidade.
                         <br/><br/>
-                        <strong>Para tomada de decisão crítica (modernização, alterações), recupere os 6 artefatos ausentes antes de proceder.</strong>
+                        <strong>O que ainda falta:</strong> definições internas dos 7 artefatos externos (campos, tipos, constraints, índices, código-fonte). Para tomada de decisão crítica (modernização ou alterações de alto impacto), recupere esses artefatos antes de proceder.
                     </p>
                 </div>
             </div>
