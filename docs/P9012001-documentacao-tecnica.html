@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentação Técnica — P9012001 | SIAF / CHESF</title>
+<style>
+:root {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --sidebar: #1a2332;
+  --sidebar-hover: #243044;
+  --sidebar-active: #2d4a6f;
+  --accent: #1e6b8a;
+  --accent-light: #e8f4f8;
+  --text: #1a2332;
+  --text-muted: #5a6577;
+  --border: #d8dee8;
+  --success: #1a7a4c;
+  --warning: #b8860b;
+  --danger: #b33a3a;
+  --info: #2c5aa0;
+  --code-bg: #0f1724;
+  --code-text: #e2e8f0;
+  --kw: #7dd3fc;
+  --str: #86efac;
+  --cmt: #94a3b8;
+  --num: #fcd34d;
+  --ident: #c4b5fd;
+  --shadow: 0 1px 3px rgba(0,0,0,.08);
+  --radius: 6px;
+  --sidebar-w: 280px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  display: flex;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Sidebar */
+#sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  color: #cbd5e1;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+#sidebar .brand {
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid #2d3a4f;
+}
+#sidebar .brand h1 {
+  font-size: 1.05rem;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+#sidebar .brand p {
+  font-size: .72rem;
+  color: #8899ad;
+  margin-top: .25rem;
+}
+#sidebar nav { padding: .75rem 0 4rem; flex: 1; }
+#sidebar nav a {
+  display: block;
+  padding: .4rem 1.25rem;
+  color: #a8b8cc;
+  font-size: .82rem;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: background .15s, color .15s;
+}
+#sidebar nav a:hover { background: var(--sidebar-hover); color: #fff; }
+#sidebar nav a.active {
+  background: var(--sidebar-active);
+  color: #fff;
+  border-left-color: #5eb8d8;
+  font-weight: 600;
+}
+#sidebar nav .nav-group {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #64748b;
+  padding: .85rem 1.25rem .3rem;
+}
+
+/* Main */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-width: 0;
+}
+#topbar {
+  position: sticky; top: 0; z-index: 90;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: .75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow);
+}
+#breadcrumb { font-size: .8rem; color: var(--text-muted); flex: 1; min-width: 140px; }
+#breadcrumb span.here { color: var(--text); font-weight: 600; }
+#search-wrap { position: relative; }
+#search-box {
+  width: 260px; max-width: 100%;
+  padding: .45rem .75rem .45rem 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: .85rem;
+  background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%235a6577' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.656a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") no-repeat .6rem center;
+}
+#search-box:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+#search-results {
+  display: none;
+  position: absolute; top: 100%; right: 0;
+  width: 360px; max-width: 90vw;
+  max-height: 360px; overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  z-index: 200;
+  margin-top: 4px;
+}
+#search-results.open { display: block; }
+#search-results .sr-item {
+  display: block;
+  padding: .55rem .9rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  font-size: .82rem;
+  color: var(--text);
+  text-decoration: none;
+}
+#search-results .sr-item:hover { background: var(--accent-light); }
+#search-results .sr-item .sr-type {
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-right: .4rem;
+}
+#search-results .sr-empty { padding: .9rem; color: var(--text-muted); font-size: .85rem; }
+.top-actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+.btn {
+  padding: .4rem .7rem;
+  font-size: .75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 500;
+}
+.btn:hover { background: var(--accent-light); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: #185a75; }
+
+.content { padding: 1.5rem 2rem 5rem; max-width: 1100px; }
+
+/* Alert partial */
+.alert-partial {
+  background: #fff8e6;
+  border: 1px solid #e6c86a;
+  border-left: 4px solid var(--warning);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.alert-partial h2 { font-size: 1rem; color: #8a6d00; margin-bottom: .5rem; }
+.alert-partial ul { margin: .5rem 0 0 1.25rem; font-size: .88rem; }
+.alert-partial li { margin-bottom: .35rem; }
+
+/* Sections */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .9rem 1.25rem;
+  cursor: pointer;
+  user-select: none;
+  background: linear-gradient(180deg, #fafbfc 0%, #f0f3f7 100%);
+  border-bottom: 1px solid transparent;
+}
+.section.open .section-header { border-bottom-color: var(--border); }
+.section-header:hover { background: var(--accent-light); }
+.section-header .chevron {
+  width: 18px; height: 18px;
+  transition: transform .2s;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+.section.open .section-header .chevron { transform: rotate(90deg); }
+.section-header h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  flex: 1;
+}
+.section-header .sec-num {
+  font-size: .7rem;
+  background: var(--accent);
+  color: #fff;
+  padding: .15rem .45rem;
+  border-radius: 3px;
+  font-weight: 600;
+}
+.section-body {
+  display: none;
+  padding: 1.25rem 1.5rem;
+}
+.section.open .section-body { display: block; }
+
+h3 { font-size: .95rem; margin: 1.1rem 0 .5rem; color: var(--accent); }
+h4 { font-size: .88rem; margin: .9rem 0 .4rem; }
+p, li { font-size: .9rem; }
+ul, ol { margin: .4rem 0 .8rem 1.4rem; }
+p { margin-bottom: .7rem; }
+
+/* Badges / types */
+.badge {
+  display: inline-block;
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: .15rem .45rem;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+.badge-prog { background: #dbeafe; color: #1e40af; }
+.badge-lda { background: #f3e8ff; color: #6b21a8; }
+.badge-pda { background: #ede9fe; color: #5b21b6; }
+.badge-sub { background: #d1fae5; color: #065f46; }
+.badge-rep { background: #ffedd5; color: #9a3412; }
+.badge-view { background: #cffafe; color: #155e75; }
+.badge-file { background: #fee2e2; color: #991b1b; }
+.badge-var { background: #e0e7ff; color: #3730a3; }
+.badge-rule { background: #fef3c7; color: #92400e; }
+.badge-read { background: #d1fae5; color: #065f46; }
+.badge-upd { background: #fef3c7; color: #92400e; }
+.badge-del { background: #fee2e2; color: #991b1b; }
+.badge-miss { background: #fce7f3; color: #9d174d; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: .75rem 0 1rem; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .84rem;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: .5rem .65rem;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #e8eef5;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: #eef6fa; }
+td code, th code, p code, li code {
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: .82em;
+  background: #eef2f7;
+  padding: .05rem .3rem;
+  border-radius: 3px;
+}
+
+/* Code blocks */
+pre.source {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: .78rem;
+  line-height: 1.55;
+  margin: .6rem 0 1rem;
+}
+pre.source .ln { color: #64748b; user-select: none; margin-right: .8rem; }
+pre.source .kw { color: var(--kw); font-weight: 600; }
+pre.source .str { color: var(--str); }
+pre.source .cmt { color: var(--cmt); font-style: italic; }
+pre.source .num { color: var(--num); }
+pre.source .id { color: var(--ident); }
+
+/* Flowchart */
+.flowchart {
+  background: #f0f4f8;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  font-family: "Consolas", monospace;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  white-space: pre;
+  color: #1e293b;
+  margin: .75rem 0 1rem;
+}
+.flow-box {
+  display: inline-block;
+  border: 1.5px solid var(--accent);
+  background: #fff;
+  padding: .35rem .7rem;
+  border-radius: 4px;
+  margin: .2rem 0;
+  font-size: .82rem;
+  font-family: "Segoe UI", sans-serif;
+}
+.flow-dia {
+  display: inline-block;
+  border: 1.5px solid var(--warning);
+  background: #fffbeb;
+  padding: .35rem .9rem;
+  transform: rotate(0deg);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  min-width: 160px;
+  text-align: center;
+}
+.flow-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin: 1rem 0;
+}
+.flow-node {
+  background: #fff;
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  padding: .55rem 1.1rem;
+  font-size: .82rem;
+  text-align: center;
+  max-width: 420px;
+  box-shadow: var(--shadow);
+}
+.flow-node.decision {
+  border-color: var(--warning);
+  background: #fffbeb;
+  border-radius: 4px;
+  transform: none;
+  position: relative;
+}
+.flow-node.error { border-color: var(--danger); background: #fef2f2; }
+.flow-node.ok { border-color: var(--success); background: #ecfdf5; }
+.flow-node.io { border-color: var(--info); background: #eff6ff; border-style: dashed; }
+.flow-arrow {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1.2;
+  padding: .15rem 0;
+}
+.flow-branch {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: .5rem 0;
+}
+.flow-col { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.flow-label {
+  font-size: .7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: .75rem;
+  margin: 1rem 0;
+}
+.dash-card {
+  background: linear-gradient(145deg, #fff 0%, #f0f5fa 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: .9rem 1rem;
+  text-align: center;
+  transition: transform .15s, box-shadow .15s;
+}
+.dash-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+.dash-card .val {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1.2;
+}
+.dash-card .lbl {
+  font-size: .7rem;
+  color: var(--text-muted);
+  margin-top: .25rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.dash-card.warn .val { color: var(--warning); }
+.dash-card.danger .val { color: var(--danger); }
+.dash-card.ok .val { color: var(--success); }
+
+/* Object flow */
+.obj-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin: 1rem 0;
+  font-size: .82rem;
+}
+.obj-chip {
+  padding: .4rem .7rem;
+  border-radius: 4px;
+  font-weight: 600;
+  border: 1px solid;
+}
+.obj-arrow-h { color: var(--text-muted); font-weight: 700; }
+
+/* Back to top */
+#back-top {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+  display: none;
+  z-index: 80;
+  align-items: center;
+  justify-content: center;
+}
+#back-top.visible { display: flex; }
+#back-top:hover { background: #185a75; }
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: .6rem;
+  margin: .75rem 0 1rem;
+}
+.meta-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: .55rem .8rem;
+  font-size: .82rem;
+}
+.meta-item strong { display: block; font-size: .68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+
+.hl { background: #fef08a; padding: 0 .15rem; }
+.mark-search { background: #fde68a; outline: 2px solid #f59e0b; }
+
+footer.doc-footer {
+  margin-top: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+  font-size: .75rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  #sidebar { transform: translateX(-100%); transition: transform .25s; }
+  #sidebar.open { transform: translateX(0); }
+  #main { margin-left: 0; }
+  #menu-toggle { display: inline-flex !important; }
+  .content { padding: 1rem; }
+}
+#menu-toggle { display: none; }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div class="brand">
+    <h1>P9012001</h1>
+    <p>SIAF · CHESF · Documentação Técnica</p>
+  </div>
+  <nav id="side-nav">
+    <div class="nav-group">Início</div>
+    <a href="#sec-dashboard" data-sec="sec-dashboard">Dashboard</a>
+    <a href="#sec-aviso" data-sec="sec-aviso">Aviso de análise parcial</a>
+    <a href="#sec-executivo" data-sec="sec-executivo">1. Resumo executivo</a>
+    <a href="#sec-tecnico" data-sec="sec-tecnico">2. Resumo técnico</a>
+    <div class="nav-group">Análise funcional</div>
+    <a href="#sec-proposito" data-sec="sec-proposito">3. Propósito</a>
+    <a href="#sec-fluxo" data-sec="sec-fluxo">4. Fluxo geral</a>
+    <a href="#sec-entradas" data-sec="sec-entradas">5. Entradas</a>
+    <a href="#sec-saidas" data-sec="sec-saidas">6. Saídas</a>
+    <div class="nav-group">Dados e regras</div>
+    <a href="#sec-banco" data-sec="sec-banco">7. Acesso a banco</a>
+    <a href="#sec-estruturas" data-sec="sec-estruturas">8. Estruturas de dados</a>
+    <a href="#sec-regras" data-sec="sec-regras">9. Regras de negócio</a>
+    <a href="#sec-indice-regras" data-sec="sec-indice-regras">10. Índice de regras</a>
+    <div class="nav-group">Integração</div>
+    <a href="#sec-chamadas" data-sec="sec-chamadas">11. Chamadas externas</a>
+    <a href="#sec-erros" data-sec="sec-erros">12. Tratamento de erros</a>
+    <a href="#sec-dependencias" data-sec="sec-dependencias">13. Dependências</a>
+    <a href="#sec-fluxo-objetos" data-sec="sec-fluxo-objetos">14. Fluxo entre objetos</a>
+    <div class="nav-group">Qualidade</div>
+    <a href="#sec-performance" data-sec="sec-performance">15. Performance</a>
+    <a href="#sec-problemas" data-sec="sec-problemas">16. Problemas possíveis</a>
+    <a href="#sec-modernizacao" data-sec="sec-modernizacao">17. Modernização</a>
+    <div class="nav-group">Entrega</div>
+    <a href="#sec-entregaveis" data-sec="sec-entregaveis">18. Entregáveis finais</a>
+    <a href="#sec-fonte" data-sec="sec-fonte">19. Código-fonte anotado</a>
+    <a href="#sec-pagina" data-sec="sec-pagina">20. Sobre esta página</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <button class="btn" id="menu-toggle" type="button" aria-label="Menu">?</button>
+    <div id="breadcrumb">P9012001 / <span class="here" id="bc-here">Dashboard</span></div>
+    <div class="top-actions">
+      <button class="btn" type="button" id="btn-expand">Expandir tudo</button>
+      <button class="btn" type="button" id="btn-collapse">Recolher tudo</button>
+    </div>
+    <div id="search-wrap">
+      <input type="search" id="search-box" placeholder="Buscar programas, regras, views…" autocomplete="off" aria-label="Busca">
+      <div id="search-results" role="listbox"></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- AVISO PARCIAL (AC5) -->
+    <div class="alert-partial" id="sec-aviso">
+      <h2>? Análise parcial — artefatos não fornecidos</h2>
+      <p>Esta documentação foi elaborada <strong>exclusivamente</strong> a partir do fonte <code>Codigo-natural/P9012001.NSP</code> (260 linhas). Os objetos abaixo <strong>não foram fornecidos</strong> no repositório; a análise permanece incompleta nos pontos indicados:</p>
+      <ul>
+        <li><span class="badge badge-miss">Ausente</span> <code>L9012001</code> — LDA local: layout completo dos parâmetros de entrada (<code>NUMERO-SMP</code>, <code>FUNCAO</code>, <code>NUMERO-ISN</code>, <code>EFETIVA</code>, campos <code>L001-*</code>). Sem ele, formatos exatos, redefinições e textos de ajuda ficam inferidos apenas pelo uso no programa.</li>
+        <li><span class="badge badge-miss">Ausente</span> <code>A9013Q06</code> — área de parâmetros da rotina <code>N9013Q06</code> (<code>NQ06-LIST-PARM</code>, <code>NQ06-CODG-SITC</code>, <code>NQ06-CODG-RETN</code>). Sem ele, a estrutura completa do contrato de chamada e demais campos de retorno não podem ser documentados.</li>
+        <li><span class="badge badge-miss">Ausente</span> <code>L9013Q13</code> — LDA auxiliar do sistema S9013. Sem ele, não é possível listar variáveis compartilhadas carregadas pelo programa além das observadas no fonte.</li>
+        <li><span class="badge badge-miss">Ausente</span> <code>N9013Q06</code> — subprograma Natural chamado para validar situação cadastral. Sem o fonte, a lógica interna de consulta ao cadastro de situações e os códigos de retorno distintos de zero permanecem desconhecidos.</li>
+        <li><span class="badge badge-miss">Ausente</span> <code>R9012001</code> — formulário/relatório de impressão ANTES/APÓS. Sem ele, o layout de colunas, máscaras e campos impressos não pode ser reproduzido.</li>
+        <li><span class="badge badge-miss">Ausente</span> Definição do arquivo Adabas <code>D9013142-13</code> / view <code>D142-13-CADS-SIMU</code> — DDM/FDT com tipos, descritores, PE/MU e chaves. Sem ela, a documentação de campos do registro e de índices fica limitada aos nomes referenciados no MOVE.</li>
+      </ul>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.85rem;">Aviso operacional do cabeçalho (linhas 2–3): <em>«Antes de iniciar um novo procedimento de manutenção, verificar com o coordenador se este objeto já está no ambiente de produção.»</em></p>
+    </div>
+
+    <!-- DASHBOARD -->
+    <section class="section open" id="sec-dashboard">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">0</span>
+        <h2>Dashboard — indicadores do programa</h2>
+      </div>
+      <div class="section-body">
+        <p>Indicadores derivados da análise estática de <code>P9012001</code>. Contagens de regras e problemas incluem apenas o que é observável no fonte fornecido.</p>
+        <div class="dashboard-grid">
+          <div class="dash-card"><div class="val">260</div><div class="lbl">Linhas analisadas</div></div>
+          <div class="dash-card"><div class="val">1</div><div class="lbl">Rotinas chamadas (CALLNAT)</div></div>
+          <div class="dash-card"><div class="val">1</div><div class="lbl">Arquivos Adabas</div></div>
+          <div class="dash-card"><div class="val">1</div><div class="lbl">Views Adabas</div></div>
+          <div class="dash-card ok"><div class="val">24</div><div class="lbl">Regras de negócio identificadas</div></div>
+          <div class="dash-card"><div class="val">1</div><div class="lbl">Leituras (GET)</div></div>
+          <div class="dash-card"><div class="val">1</div><div class="lbl">Atualizações (UPDATE)</div></div>
+          <div class="dash-card"><div class="val">1</div><div class="lbl">Exclusões (DELETE)</div></div>
+          <div class="dash-card warn"><div class="val">9</div><div class="lbl">Problemas possíveis</div></div>
+          <div class="dash-card"><div class="val">Média</div><div class="lbl">Complexidade estimada</div></div>
+          <div class="dash-card"><div class="val">16</div><div class="lbl">Parâmetros de entrada</div></div>
+          <div class="dash-card"><div class="val">3</div><div class="lbl">LDAs / PDAs locais</div></div>
+          <div class="dash-card"><div class="val">1</div><div class="lbl">Relatórios (WRITE FORM)</div></div>
+          <div class="dash-card"><div class="val">1</div><div class="lbl">Subrotinas internas</div></div>
+          <div class="dash-card danger"><div class="val">6</div><div class="lbl">Artefatos ausentes</div></div>
+          <div class="dash-card"><div class="val">2</div><div class="lbl">Caminhos de transação</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1 RESUMO EXECUTIVO -->
+    <section class="section open" id="sec-executivo">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">1</span>
+        <h2>Resumo executivo</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="badge badge-prog">Programa</span> <strong>P9012001</strong> é a rotina batch do sistema <strong>S9013 — SIAF</strong> (Sistema de Informação de Aquisição e Fornecimento) da <strong>CHESF</strong> que <strong>altera ou exclui</strong>, por número interno de registro (ISN), cadastros de simulação/cobrança no arquivo Adabas <code>D9013142-13</code>.</p>
+        <p>Criado em 21/03/2012 (documento SMP-0232/2012) e ajustado em 08/05/2012 (SMP-0405/2012) para ampliar <code>NUMR-DOCM-COBR</code> de 8 para 9 dígitos. O programa valida 16 parâmetros, imprime imagem ANTES e APÓS via relatório <code>R9012001</code>, e só confirma a transação quando o parâmetro <code>EFETIVA</code> vale <code>SIM</code> — permitindo simulação segura (<code>NAO</code> ? <code>BACKOUT</code>).</p>
+        <p><strong>Valor de negócio:</strong> centraliza manutenção pontual de registros de simulação sem depender de atualização online, com trilha de auditoria impressa e modo dry-run. O conhecimento estava concentrado no código e em especialistas; esta documentação reduz risco de manutenção e fundamenta decisões de migração.</p>
+        <p><strong>Limitação:</strong> análise parcial — seis artefatos dependentes não foram fornecidos (ver aviso acima).</p>
+      </div>
+    </section>
+
+    <!-- 2 RESUMO TECNICO -->
+    <section class="section open" id="sec-tecnico">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">2</span>
+        <h2>Resumo técnico</h2>
+      </div>
+      <div class="section-body">
+        <div class="meta-grid">
+          <div class="meta-item"><strong>Objeto</strong> P9012001 (Natural Program)</div>
+          <div class="meta-item"><strong>Cliente / Sistema</strong> CHESF / S9013 — SIAF</div>
+          <div class="meta-item"><strong>Arquivo</strong> D9013142-13 via view D142-13-CADS-SIMU</div>
+          <div class="meta-item"><strong>Modo</strong> Batch (também aceita DEVICE=VIDEO)</div>
+          <div class="meta-item"><strong>Funções</strong> ALTERAR | EXCLUIR</div>
+          <div class="meta-item"><strong>Confirmação</strong> EFETIVA = SIM | NAO</div>
+          <div class="meta-item"><strong>Acesso</strong> GET por ISN ? UPDATE/DELETE</div>
+          <div class="meta-item"><strong>CALLNAT</strong> N9013Q06 (validação de situação)</div>
+          <div class="meta-item"><strong>Relatório</strong> R9012001 (ANTES / APOS)</div>
+          <div class="meta-item"><strong>Erro batch</strong> TERMINATE 133</div>
+          <div class="meta-item"><strong>Subrotina</strong> MOVE-CAMPOS-NAO-NULL</div>
+          <div class="meta-item"><strong>Linhas</strong> 260 (fonte NSP)</div>
+        </div>
+        <p>Fluxo linear: validação acumulativa (<code>DECIDE FOR EVERY CONDITION</code>) ? inicialização ? <code>GET</code> por ISN ? impressão ANTES ? <code>DELETE</code> ou <code>UPDATE</code> ? commit/rollback conforme <code>EFETIVA</code> ? impressão APÓS ? fim.</p>
+      </div>
+    </section>
+
+    <!-- 3 PROPOSITO -->
+    <section class="section open" id="sec-proposito">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">3</span>
+        <h2>Propósito</h2>
+      </div>
+      <div class="section-body">
+        <p>Conforme cabeçalho (linhas 27–28): <em>«Alterar/Excluir registros via ISN em modo Batch do arquivo D9013142-13»</em>.</p>
+        <h3>Objetivos de negócio</h3>
+        <ul>
+          <li>Corrigir campos de cadastro de simulação/cobrança (tipo/categoria de documento, contrato, CNPJ, parcela, valores, situação, documento de cobrança, data, vistoria IC1) sem regravar o registro inteiro — apenas campos informados (sentinela <code>NULL</code>).</li>
+          <li>Excluir fisicamente um registro identificado pelo ISN.</li>
+          <li>Permitir ensaio (<code>EFETIVA=NAO</code>) com as mesmas validações e relatório, sem persistir a alteração.</li>
+          <li>Gerar evidência impressa do estado anterior e posterior à operação.</li>
+        </ul>
+        <h3>Contexto histórico</h3>
+        <ul>
+          <li><strong>Criação:</strong> 21/03/2012 — analista Edvilson F. Silva, programador Alexandre Vidal — documento SMP-0232/2012.</li>
+          <li><strong>Manutenção:</strong> 08/05/2012 — Edvilson Silva — SMP-0405/2012 — campo <code>NUMR-DOCM-COBR</code> de N8 para N9 no arquivo D9013142-13.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4 FLUXO GERAL -->
+    <section class="section open" id="sec-fluxo">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">4</span>
+        <h2>Fluxo geral (com fluxograma)</h2>
+      </div>
+      <div class="section-body">
+        <h3>Passos textuais</h3>
+        <ol>
+          <li>Receber 16 parâmetros via <code>INPUT</code> (linhas 67–83).</li>
+          <li>Validar todas as condições de entrada; acumular erros em <code>WFL-TEM-ERRO</code> (87–172).</li>
+          <li>Se houver erro: mensagem de encerramento; <code>STOP</code> (vídeo) ou <code>TERMINATE 133</code> (batch) (174–182).</li>
+          <li>Inicializar <code>WTL-IDNF-FILE</code>, <code>WTL-STTS-REGS='ANTES'</code>, <code>WTL-USER-RESP=*USER</code> (186–188).</li>
+          <li><code>GET D142-13-CADS-SIMU</code> pelo <code>NUMERO-ISN</code> (etiqueta G1.) e imprimir formulário <code>R9012001</code> (192–193).</li>
+          <li>Se <code>FUNCAO=EXCLUIR</code>: <code>DELETE (G1.)</code>. Se <code>ALTERAR</code>: <code>PERFORM MOVE-CAMPOS-NAO-NULL</code> e <code>UPDATE (G1.)</code> (195–200).</li>
+          <li>Se <code>EFETIVA=SIM</code>: <code>END TRANSACTION</code>; senão <code>BACKOUT TRANSACTION</code> (201–206).</li>
+          <li>Marcar status <code>APOS</code>; se exclusão, <code>RESET</code> da view; nova página e reimpressão do formulário (213–220).</li>
+          <li><code>END</code> do programa (260).</li>
+        </ol>
+        <h3>Fluxograma</h3>
+        <div class="flow-diagram">
+          <div class="flow-node">Início — DEFINE DATA / INPUT (16 parâmetros)</div>
+          <div class="flow-arrow">?</div>
+          <div class="flow-node">Validação acumulativa<br><small>DECIDE FOR EVERY CONDITION</small></div>
+          <div class="flow-arrow">?</div>
+          <div class="flow-node decision">WFL-TEM-ERRO?</div>
+          <div class="flow-branch">
+            <div class="flow-col">
+              <span class="flow-label">Sim</span>
+              <div class="flow-arrow">?</div>
+              <div class="flow-node error">Encerrar<br>STOP / TERMINATE 133</div>
+            </div>
+            <div class="flow-col">
+              <span class="flow-label">Não</span>
+              <div class="flow-arrow">?</div>
+              <div class="flow-node">Init WTL-* · GET por ISN<br>WRITE FORM R9012001 (ANTES)</div>
+              <div class="flow-arrow">?</div>
+              <div class="flow-node decision">FUNCAO?</div>
+              <div class="flow-branch">
+                <div class="flow-col">
+                  <span class="flow-label">EXCLUIR</span>
+                  <div class="flow-arrow">?</div>
+                  <div class="flow-node">DELETE (G1.)</div>
+                </div>
+                <div class="flow-col">
+                  <span class="flow-label">ALTERAR</span>
+                  <div class="flow-arrow">?</div>
+                  <div class="flow-node">MOVE-CAMPOS-NAO-NULL<br>+ UPDATE (G1.)</div>
+                </div>
+              </div>
+              <div class="flow-arrow">?</div>
+              <div class="flow-node decision">EFETIVA = SIM?</div>
+              <div class="flow-branch">
+                <div class="flow-col">
+                  <span class="flow-label">SIM</span>
+                  <div class="flow-arrow">?</div>
+                  <div class="flow-node ok">END TRANSACTION</div>
+                </div>
+                <div class="flow-col">
+                  <span class="flow-label">NAO</span>
+                  <div class="flow-arrow">?</div>
+                  <div class="flow-node">BACKOUT TRANSACTION</div>
+                </div>
+              </div>
+              <div class="flow-arrow">?</div>
+              <div class="flow-node io">Status APOS · RESET se EXCLUIR<br>WRITE FORM R9012001</div>
+              <div class="flow-arrow">?</div>
+              <div class="flow-node ok">Fim (END)</div>
+            </div>
+          </div>
+        </div>
+        <div class="flowchart">INICIO
+  |
+  v
+[INPUT parametros] --> [Validar TODOS os campos]
+  |
+  +-- erro? --SIM--> [WRITE erros] --> [VIDEO? STOP : TERMINATE 133]
+  |
+ NAO
+  |
+  v
+[WTL-*=ANTES] --> [GET view ISN] --> [WRITE R9012001 ANTES]
+  |
+  +-- EXCLUIR --> [DELETE]
+  +-- ALTERAR --> [MOVE nao-NULL] --> [UPDATE]
+  |
+  v
+[EFETIVA=SIM?] --SIM--> [END TRANSACTION]
+           \--NAO--> [BACKOUT TRANSACTION]
+  |
+  v
+[APOS] --> [RESET se EXCLUIR] --> [WRITE R9012001 APOS] --> FIM</div>
+      </div>
+    </section>
+
+    <!-- 5 ENTRADAS -->
+    <section class="section open" id="sec-entradas">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">5</span>
+        <h2>Entradas (parâmetros)</h2>
+      </div>
+      <div class="section-body">
+        <p>Todos os parâmetros são lidos por <code>INPUT</code> (linhas 67–83). Campos com <code>AD=T</code> estão protegidos/somente exibição no mapa interativo. Definições formais dependem de <code>L9012001</code> (ausente).</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Parâmetro</th><th>Linha</th><th>AD</th><th>Papel / validação</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td><code>NUMERO-SMP</code></td><td>67</td><td>T</td><td>Documento autorizador; obrigatório (não branco)</td></tr>
+              <tr><td>2</td><td><code>FUNCAO</code></td><td>68</td><td>T</td><td><code>ALTERAR</code> ou <code>EXCLUIR</code></td></tr>
+              <tr><td>3</td><td><code>NUMERO-ISN</code></td><td>69</td><td>—</td><td>ISN do registro; ? 0</td></tr>
+              <tr><td>4</td><td><code>EFETIVA</code></td><td>70</td><td>—</td><td><code>SIM</code> (grava) ou <code>NAO</code> (rollback)</td></tr>
+              <tr><td>5</td><td><code>L001-CODG-TIPO-DOCM-SIMU</code></td><td>72</td><td>—</td><td>Se ? NULL: <code>00</code>, <code>02</code> ou <code>04</code></td></tr>
+              <tr><td>6</td><td><code>L001-CODG-CATG-DOCM-SIMU</code></td><td>73</td><td>T</td><td>Se ? NULL: <code>B</code> ou <code>R</code></td></tr>
+              <tr><td>7</td><td><code>L001-NUMR-CONT-MATL</code></td><td>74</td><td>—</td><td>Se ? NULL: 10 dígitos numéricos</td></tr>
+              <tr><td>8</td><td><code>L001-NUMR-CNPJ-FORN-MATL</code></td><td>75</td><td>—</td><td>Se ? NULL: 14 dígitos numéricos</td></tr>
+              <tr><td>9</td><td><code>L001-NUMR-PARC-MATL</code></td><td>76</td><td>—</td><td>Se ? NULL: 3 dígitos numéricos</td></tr>
+              <tr><td>10</td><td><code>L001-VALR-DOCM-SIMU</code></td><td>77</td><td>—</td><td>Se ? NULL: numérico (após limpar vírgula)</td></tr>
+              <tr><td>11</td><td><code>L001-INDC-SITC-SIMU</code></td><td>78</td><td>T</td><td>Se ? NULL: deve existir via N9013Q06</td></tr>
+              <tr><td>12</td><td><code>L001-CODG-TIPO-DOCM-COBR</code></td><td>79</td><td>—</td><td>Se ? NULL: <code>00</code>, <code>02</code> ou <code>04</code></td></tr>
+              <tr><td>13</td><td><code>L001-NUMR-DOCM-COBR</code></td><td>80</td><td>—</td><td>Se ? NULL: 9 dígitos (pós SMP-0405/2012)</td></tr>
+              <tr><td>14</td><td><code>L001-DATA-DOCM-COBR</code></td><td>81</td><td>—</td><td>NULL, <code>00000000</code> ou máscara YYYYMMDD</td></tr>
+              <tr><td>15</td><td><code>L001-VALR-DOCM-COBR</code></td><td>82</td><td>—</td><td>Se ? NULL: numérico (após limpar vírgula)</td></tr>
+              <tr><td>16</td><td><code>L001-INDC-VISA-IC1</code></td><td>83</td><td>T</td><td>Se ? NULL: faixa <code>00</code> a <code>19</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Convenção NULL:</strong> o literal <code>'NULL'</code> significa «não informar / não alterar este campo». Campos com valor <code>NULL</code> são ignorados na validação de domínio (exceto data, que também aceita <code>00000000</code>) e não são copiados no <code>UPDATE</code>.</p>
+      </div>
+    </section>
+
+    <!-- 6 SAIDAS -->
+    <section class="section open" id="sec-saidas">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">6</span>
+        <h2>Saídas</h2>
+      </div>
+      <div class="section-body">
+        <h3>Mensagens de console / sysout</h3>
+        <ul>
+          <li>Mensagens de erro de validação (uma por regra violada), via <code>WRITE</code>.</li>
+          <li>Mensagem fixa: <code>Processo encerrado devido aos erros encontrados</code> (linha 176).</li>
+        </ul>
+        <h3>Relatório</h3>
+        <ul>
+          <li>Duas impressões do formulário <span class="badge badge-rep">Relatório</span> <code>R9012001</code> no report 1 (<code>WRITE(1) NOTITLE USING FORM</code>): estado <strong>ANTES</strong> (193) e <strong>APOS</strong> (220), com <code>NEWPAGE(1)</code> entre elas.</li>
+          <li>Variáveis de formulário observadas: <code>WTL-IDNF-FILE</code> (<code>D9013142-13</code>), <code>WTL-STTS-REGS</code> (<code>ANTES</code>/<code>APOS</code>), <code>WTL-USER-RESP</code> (<code>*USER</code>) — layout completo depende de <code>R9012001</code> ausente.</li>
+          <li>Na exclusão, a view é zerada (<code>RESET</code>) antes da imagem APÓS, produzindo formulário “vazio” após a operação.</li>
+        </ul>
+        <h3>Efeito em banco</h3>
+        <ul>
+          <li><code>UPDATE</code> ou <code>DELETE</code> no registro ISN, efetivado somente com <code>END TRANSACTION</code> quando <code>EFETIVA='SIM'</code>.</li>
+          <li>Código de término batch em erro: <strong>133</strong>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7 BANCO -->
+    <section class="section open" id="sec-banco">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">7</span>
+        <h2>Acesso a banco de dados</h2>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Operação</th><th>Objeto</th><th>Tipo</th><th>Linha</th><th>Detalhe</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-read">Leitura</span></td>
+                <td><code>D142-13-CADS-SIMU</code></td>
+                <td>View Adabas</td>
+                <td>192</td>
+                <td><code>G1. GET … NUMERO-ISN</code> — acesso posicional direto por ISN (não por chave descritora)</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-del">Exclusão</span></td>
+                <td><code>D142-13-CADS-SIMU</code></td>
+                <td>View / arquivo D9013142-13</td>
+                <td>197</td>
+                <td><code>DELETE (G1.)</code> quando FUNCAO=EXCLUIR</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-upd">Alteração</span></td>
+                <td><code>D142-13-CADS-SIMU</code></td>
+                <td>View / arquivo D9013142-13</td>
+                <td>200</td>
+                <td><code>UPDATE (G1.)</code> após MOVE-CAMPOS-NAO-NULL</td>
+              </tr>
+              <tr>
+                <td>Commit</td>
+                <td>Transação Adabas</td>
+                <td>—</td>
+                <td>203</td>
+                <td><code>END TRANSACTION</code> se EFETIVA=SIM</td>
+              </tr>
+              <tr>
+                <td>Rollback</td>
+                <td>Transação Adabas</td>
+                <td>—</td>
+                <td>205</td>
+                <td><code>BACKOUT TRANSACTION</code> se EFETIVA?SIM</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Arquivo físico referenciado: <span class="badge badge-file">Adabas</span> <code>D9013142-13</code>. A FDT/DDM não foi fornecida; campos atualizados inferidos pelo MOVE (linhas 230–253).</p>
+        <p><strong>Observação:</strong> não há tratamento explícito de registro não encontrado no <code>GET</code> (sem <code>IF *RECORD-FOUND</code> / <code>ON ERROR</code> visível neste fonte).</p>
+      </div>
+    </section>
+
+    <!-- 8 ESTRUTURAS -->
+    <section class="section open" id="sec-estruturas">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">8</span>
+        <h2>Estruturas de dados</h2>
+      </div>
+      <div class="section-body">
+        <h3>Incluídas via LOCAL USING</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Objeto</th><th>Linha</th><th>Uso observado</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge badge-lda">LDA</span> <code>L9012001</code></td><td>42</td><td>Parâmetros de entrada do programa (NUMERO-*, EFETIVA, L001-*)</td><td><span class="badge badge-miss">Não fornecido</span></td></tr>
+              <tr><td><span class="badge badge-pda">PDA/LDA</span> <code>A9013Q06</code></td><td>43</td><td>Parâmetros NQ06-* da chamada N9013Q06</td><td><span class="badge badge-miss">Não fornecido</span></td></tr>
+              <tr><td><span class="badge badge-lda">LDA</span> <code>L9013Q13</code></td><td>44</td><td>Área auxiliar S9013 (uso interno não detalhado no corpo)</td><td><span class="badge badge-miss">Não fornecido</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Variáveis locais declaradas no programa</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Variável</th><th>Formato</th><th>Linha</th><th>Uso</th></tr></thead>
+            <tbody>
+              <tr><td><code>WAX-VALR-INTR</code></td><td>N0020</td><td>50</td><td><em>Declarada; não referenciada no corpo — possível morta</em></td></tr>
+              <tr><td><code>WAX-VALR-DECM</code></td><td>N20,7</td><td>51</td><td><em>Declarada; não referenciada no corpo — possível morta</em></td></tr>
+              <tr><td><code>WAX-VALR-EDIT</code></td><td>A0018</td><td>52</td><td>Normalização de valores monetários na validação</td></tr>
+              <tr><td><code>WFL-TEM-ERRO</code></td><td>L INIT FALSE</td><td>56</td><td>Flag acumuladora de erros de validação</td></tr>
+              <tr><td><code>WTL-IDNF-FILE</code></td><td>A0020</td><td>60</td><td>Identificação do arquivo no relatório (= D9013142-13)</td></tr>
+              <tr><td><code>WTL-STTS-REGS</code></td><td>A0005</td><td>61</td><td>ANTES / APOS</td></tr>
+              <tr><td><code>WTL-USER-RESP</code></td><td>A0010</td><td>62</td><td>Usuário responsável (*USER)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Campos da view referenciados no UPDATE</h3>
+        <p>Mapeamento parâmetro ? campo Adabas (subrotina <code>MOVE-CAMPOS-NAO-NULL</code>):</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parâmetro L001</th><th>Campo D142-13-CADS-SIMU</th><th>Conversão</th><th>Linha</th></tr></thead>
+            <tbody>
+              <tr><td>CODG-TIPO-DOCM-SIMU</td><td>CODG-TIPO-DOCM-SIMU</td><td>VAL()</td><td>231</td></tr>
+              <tr><td>CODG-CATG-DOCM-SIMU</td><td>CODG-CATG-DOCM-SIMU</td><td>direto</td><td>233</td></tr>
+              <tr><td>NUMR-CONT-MATL</td><td>NUMR-CONT-MATL</td><td>VAL()</td><td>235</td></tr>
+              <tr><td>NUMR-CNPJ-FORN-MATL</td><td>NUMR-CNPJ-FORN-MATL</td><td>VAL()</td><td>237</td></tr>
+              <tr><td>NUMR-PARC-MATL</td><td>NUMR-PARC-MATL</td><td>VAL()</td><td>239</td></tr>
+              <tr><td>VALR-DOCM-SIMU</td><td>VALR-DOCM-SIMU</td><td>VAL()</td><td>241</td></tr>
+              <tr><td>INDC-SITC-SIMU</td><td>INDC-SITC-SIMU</td><td>direto</td><td>243</td></tr>
+              <tr><td>CODG-TIPO-DOCM-COBR</td><td>CODG-TIPO-DOCM-COBR</td><td>VAL()</td><td>245</td></tr>
+              <tr><td>NUMR-DOCM-COBR</td><td>NUMR-DOCM-COBR</td><td>VAL()</td><td>247</td></tr>
+              <tr><td>DATA-DOCM-COBR</td><td>DATA-DOCM-COBR</td><td>VAL()</td><td>249</td></tr>
+              <tr><td>VALR-DOCM-COBR</td><td>VALR-DOCM-COBR</td><td>VAL()</td><td>251</td></tr>
+              <tr><td>INDC-VISA-IC1</td><td>INDC-VISA-IC1</td><td>VAL()</td><td>253</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 REGRAS -->
+    <section class="section open" id="sec-regras">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">9</span>
+        <h2>Regras de negócio (narrativa)</h2>
+      </div>
+      <div class="section-body">
+        <h3>Controle operacional</h3>
+        <ul>
+          <li>A função só pode ser alteração ou exclusão; não há criação de registro neste programa.</li>
+          <li>O registro-alvo é sempre endereçado pelo ISN — pressupõe-se que o operador já conhece o número interno.</li>
+          <li>A efetivação é explícita: só grava com confirmação <code>SIM</code>. Isso habilita uso como simulação/auditoria prévia.</li>
+        </ul>
+        <h3>Atualização parcial</h3>
+        <ul>
+          <li>Campos de negócio usam a sentinela textual <code>NULL</code> para «manter valor atual».</li>
+          <li>Na alteração, apenas campos ? <code>NULL</code> são movidos para a view antes do <code>UPDATE</code>.</li>
+          <li>Na exclusão, os parâmetros L001-* de conteúdo não influenciam o DELETE (são irrelevantes à operação, embora ainda possam ser validados se ? NULL).</li>
+        </ul>
+        <h3>Domínios de código</h3>
+        <ul>
+          <li>Tipos de documento de simulação e de cobrança: conjunto {00, 02, 04}.</li>
+          <li>Categoria de documento de simulação: {B, R}.</li>
+          <li>Indicador de vistoria IC1: intervalo fechado 00–19.</li>
+          <li>Situação de simulação: deve existir no cadastro acessado por <code>N9013Q06</code> (retorno 0).</li>
+          <li>Data de documento de cobrança: aceita NULL, zeros ou data válida YYYYMMDD.</li>
+        </ul>
+        <h3>Auditoria</h3>
+        <ul>
+          <li>Sempre imprime imagem antes da mudança; depois imprime imagem após (ou em branco no DELETE).</li>
+          <li>Identifica arquivo, status e usuário no contexto do formulário.</li>
+        </ul>
+        <p>O índice tabular completo com trechos de código e impacto está na <a href="#sec-indice-regras">seção 10</a>.</p>
+      </div>
+    </section>
+
+    <!-- 10 INDICE DE REGRAS (AC2) -->
+    <section class="section open" id="sec-indice-regras">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">10</span>
+        <h2>Índice de regras de negócio</h2>
+      </div>
+      <div class="section-body">
+        <p>Tabela com rastreabilidade linha a linha. As regras RN-01 a RN-16 cobrem as validações de parâmetros; RN-17+ cobrem convenções e comportamento de persistência.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Descrição</th><th>Trecho de código</th><th>Impacto</th></tr>
+            </thead>
+            <tbody>
+              <tr id="rn-01">
+                <td><span class="badge badge-rule">RN-01</span></td>
+                <td><code>NUMERO-SMP</code> obrigatório (não pode ser branco). Linha 88–90.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">when</span> NUMERO-SMP <span class="kw">eq</span> <span class="str">' '</span>
+  <span class="kw">write</span> <span class="str">'Erro! Parametro NUMERO-SMP…'</span>
+  <span class="kw">move</span> <span class="kw">TRUE</span> <span class="kw">to</span> WFL-TEM-ERRO</pre></td>
+                <td>Impede execução sem documento autorizador SMP.</td>
+              </tr>
+              <tr id="rn-02">
+                <td><span class="badge badge-rule">RN-02</span></td>
+                <td><code>FUNCAO</code> deve ser <code>ALTERAR</code> ou <code>EXCLUIR</code>. Linha 91–93.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">when not</span>(FUNCAO = <span class="str">'ALTERAR'</span> <span class="kw">or</span> = <span class="str">'EXCLUIR'</span>)</pre></td>
+                <td>Restringe o programa às duas operações suportadas.</td>
+              </tr>
+              <tr id="rn-03">
+                <td><span class="badge badge-rule">RN-03</span></td>
+                <td><code>NUMERO-ISN</code> deve ser informado (? 0). Linha 94–96.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">when</span> NUMERO-ISN <span class="kw">EQ</span> <span class="num">0</span></pre></td>
+                <td>Evita GET/DELETE/UPDATE sem alvo.</td>
+              </tr>
+              <tr id="rn-04">
+                <td><span class="badge badge-rule">RN-04</span></td>
+                <td><code>EFETIVA</code> deve ser <code>SIM</code> ou <code>NAO</code>. Linha 97–99.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">when not</span> (EFETIVA = <span class="str">'SIM'</span> <span class="kw">or</span> = <span class="str">'NAO'</span>)</pre></td>
+                <td>Garante decisão explícita de commit/rollback.</td>
+              </tr>
+              <tr id="rn-05">
+                <td><span class="badge badge-rule">RN-05</span></td>
+                <td>Tipo doc. simulação, se informado, ? {00,02,04}. Linha 100–104.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">when</span> L001-CODG-TIPO-DOCM-SIMU <span class="kw">ne</span> <span class="str">'NULL'</span>
+  <span class="kw">if not</span> (… = <span class="str">'00'</span> <span class="kw">or</span> = <span class="str">'02'</span> <span class="kw">or</span> = <span class="str">'04'</span>)</pre></td>
+                <td>Domínio de tipo de documento de simulação.</td>
+              </tr>
+              <tr id="rn-06">
+                <td><span class="badge badge-rule">RN-06</span></td>
+                <td>Categoria doc. simulação, se informada, ? {B,R}. Linha 105–109.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">if not</span> (L001-CODG-CATG-DOCM-SIMU = <span class="str">'B'</span> <span class="kw">or</span> = <span class="str">'R'</span>)</pre></td>
+                <td>Domínio de categoria (provável Baixa/Recebimento — confirmar com negócio).</td>
+              </tr>
+              <tr id="rn-07">
+                <td><span class="badge badge-rule">RN-07</span></td>
+                <td>Nº contrato material: 10 dígitos numéricos. Linha 110–114.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">if</span> L001-NUMR-CONT-MATL <span class="kw">ne mask</span> (<span class="num">9999999999</span>)</pre></td>
+                <td>Integridade formal do número de contrato.</td>
+              </tr>
+              <tr id="rn-08">
+                <td><span class="badge badge-rule">RN-08</span></td>
+                <td>CNPJ fornecedor: 14 dígitos numéricos. Linha 115–119.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">ne mask</span> (<span class="num">99999999999999</span>)</pre></td>
+                <td>Formato CNPJ; não valida dígitos verificadores.</td>
+              </tr>
+              <tr id="rn-09">
+                <td><span class="badge badge-rule">RN-09</span></td>
+                <td>Parcela material: 3 dígitos numéricos. Linha 120–124.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">ne mask</span> (<span class="num">999</span>)</pre></td>
+                <td>Formato da parcela.</td>
+              </tr>
+              <tr id="rn-10">
+                <td><span class="badge badge-rule">RN-10</span></td>
+                <td>Valor simulação numérico (remove 1ª vírgula, alinha à direita, preenche zeros). Linha 125–133.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem">WAX-VALR-EDIT := L001-VALR-DOCM-SIMU
+<span class="kw">examine</span> … <span class="kw">for</span> <span class="str">','</span> <span class="kw">delete first</span>
+… <span class="kw">ne mask</span> (<span class="num">999999999999999999</span>)</pre></td>
+                <td>Aceita valor com vírgula decimal textual.</td>
+              </tr>
+              <tr id="rn-11">
+                <td><span class="badge badge-rule">RN-11</span></td>
+                <td>Situação simulação deve estar cadastrada (CALLNAT N9013Q06, retorno 0). Linha 134–140.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">callnat</span> <span class="str">'N9013Q06'</span> NQ06-LIST-PARM
+<span class="kw">if</span> NQ06-CODG-RETN <span class="kw">ne</span> <span class="num">0</span></pre></td>
+                <td>Garante referencial de situação; depende de N9013Q06.</td>
+              </tr>
+              <tr id="rn-12">
+                <td><span class="badge badge-rule">RN-12</span></td>
+                <td>Tipo doc. cobrança, se informado, ? {00,02,04}. Linha 141–145.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">if not</span> (L001-CODG-TIPO-DOCM-COBR = <span class="str">'00'</span> <span class="kw">or</span> = <span class="str">'02'</span> <span class="kw">or</span> = <span class="str">'04'</span>)</pre></td>
+                <td>Domínio de tipo de documento de cobrança.</td>
+              </tr>
+              <tr id="rn-13">
+                <td><span class="badge badge-rule">RN-13</span></td>
+                <td>Nº documento cobrança: 9 dígitos (SMP-0405/2012). Linha 146–150.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">ne mask</span> (<span class="num">999999999</span>)</pre></td>
+                <td>Alinhado à ampliação N8?N9 do arquivo.</td>
+              </tr>
+              <tr id="rn-14">
+                <td><span class="badge badge-rule">RN-14</span></td>
+                <td>Data doc. cobrança: NULL, 00000000 ou YYYYMMDD válido. Linha 151–155.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">when not</span> (… <span class="kw">eq</span> <span class="str">'NULL'</span> <span class="kw">or</span> = <span class="str">'00000000'</span>)
+  <span class="kw">if</span> … <span class="kw">ne mask</span>(YYYYMMDD)</pre></td>
+                <td>Permite “sem data” via zeros; valida calendário Natural.</td>
+              </tr>
+              <tr id="rn-15">
+                <td><span class="badge badge-rule">RN-15</span></td>
+                <td>Valor cobrança numérico (mesma normalização da RN-10). Linha 156–164.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem">WAX-VALR-EDIT := L001-VALR-DOCM-COBR
+… <span class="kw">ne mask</span> (<span class="num">999999999999999999</span>)</pre></td>
+                <td>Integridade do valor de cobrança.</td>
+              </tr>
+              <tr id="rn-16">
+                <td><span class="badge badge-rule">RN-16</span></td>
+                <td>Indicador vistoria IC1 ? 00–19. Linha 165–169.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">if not</span> (L001-INDC-VISA-IC1 = <span class="str">'00'</span> <span class="kw">thru</span> <span class="str">'19'</span>)</pre></td>
+                <td>Faixa fechada de códigos de vistoria.</td>
+              </tr>
+              <tr id="rn-17">
+                <td><span class="badge badge-rule">RN-17</span></td>
+                <td><strong>Convenção NULL:</strong> literal <code>'NULL'</code> = «não alterar este campo». Validação de domínio e MOVE só ocorrem quando ? NULL (exceto data com zeros). Espalhada nas linhas 100–169 e 230–253.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">when</span> L001-… <span class="kw">ne</span> <span class="str">'NULL'</span>
+  … copia / valida …</pre></td>
+                <td>Atualização parcial sem sobrescrever campos omitidos.</td>
+              </tr>
+              <tr id="rn-18">
+                <td><span class="badge badge-rule">RN-18</span></td>
+                <td><strong>ALTERAR vs EXCLUIR:</strong> EXCLUIR ? DELETE; ALTERAR ? MOVE + UPDATE. Linha 195–200.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">value</span> <span class="str">'EXCLUIR'</span>
+  <span class="kw">DELETE</span> (G1.)
+<span class="kw">value</span> <span class="str">'ALTERAR'</span>
+  <span class="kw">perform</span> MOVE-CAMPOS-NAO-NULL
+  <span class="kw">UPDATE</span> (G1.)</pre></td>
+                <td>Define o efeito físico no registro Adabas.</td>
+              </tr>
+              <tr id="rn-19">
+                <td><span class="badge badge-rule">RN-19</span></td>
+                <td><strong>Confirmação SIM:</strong> alteração só é permanente se <code>EFETIVA='SIM'</code>; caso contrário BACKOUT. Linha 202–206.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">if</span> EFETIVA = <span class="str">'SIM'</span>
+  <span class="kw">END TRANSACTION</span>
+<span class="kw">else</span>
+  <span class="kw">BACKOUT TRANSACTION</span></pre></td>
+                <td>Habilita dry-run seguro com mesmo fluxo de validação/relatório.</td>
+              </tr>
+              <tr id="rn-20">
+                <td><span class="badge badge-rule">RN-20</span></td>
+                <td>Validação acumulativa: <code>DECIDE FOR EVERY CONDITION</code> reporta todos os erros antes de encerrar. Linha 87–172, 174–181.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">decide for every condition</span>
+…
+<span class="kw">if</span> WFL-TEM-ERRO
+  … <span class="kw">terminate</span> <span class="num">133</span></pre></td>
+                <td>Operador corrige vários problemas numa só execução.</td>
+              </tr>
+              <tr id="rn-21">
+                <td><span class="badge badge-rule">RN-21</span></td>
+                <td>Encerramento: vídeo ? STOP; batch ? TERMINATE 133. Linha 177–181.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">if</span> *DEVICE = <span class="str">'VIDEO'</span>
+  <span class="kw">stop</span>
+<span class="kw">else</span>
+  <span class="kw">terminate</span> <span class="num">133</span></pre></td>
+                <td>Integração com JCL/scheduler via código 133.</td>
+              </tr>
+              <tr id="rn-22">
+                <td><span class="badge badge-rule">RN-22</span></td>
+                <td>Auditoria ANTES/APÓS via R9012001; na exclusão, RESET da view antes da imagem APÓS. Linhas 187–193, 213–220.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem">WTL-STTS-REGS := <span class="str">'ANTES'</span>
+…
+<span class="kw">if</span> FUNCAO = <span class="str">'EXCLUIR'</span>
+  <span class="kw">RESET</span> D142-13-CADS-SIMU</pre></td>
+                <td>Trilha impressa da operação; APÓS vazio no DELETE.</td>
+              </tr>
+              <tr id="rn-23">
+                <td><span class="badge badge-rule">RN-23</span></td>
+                <td>Commit/rollback no ramo <code>ANY VALUE</code> do DECIDE ON FUNCAO — executa para ALTERAR e EXCLUIR. Linha 201–206.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">any value</span>
+  <span class="kw">if</span> EFETIVA = <span class="str">'SIM'</span> …</pre></td>
+                <td>Garante decisão transacional após qualquer função válida.</td>
+              </tr>
+              <tr id="rn-24">
+                <td><span class="badge badge-rule">RN-24</span></td>
+                <td>Cópia seletiva na alteração: apenas campos ? NULL são gravados (MOVE-CAMPOS-NAO-NULL). Linha 227–256.</td>
+                <td><pre class="source" style="margin:0;padding:.4rem"><span class="kw">DEFINE SUBROUTINE</span> MOVE-CAMPOS-NAO-NULL
+<span class="kw">decide for every condition</span>
+  <span class="kw">when</span> L001-… <span class="kw">ne</span> <span class="str">'NULL'</span>
+    D142-… := …</pre></td>
+                <td>Implementa RN-17 no caminho de UPDATE.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 CHAMADAS -->
+    <section class="section open" id="sec-chamadas">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">11</span>
+        <h2>Chamadas externas</h2>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Objeto</th><th>Tipo</th><th>Linha</th><th>Contrato observado</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-sub">CALLNAT</span> <code>N9013Q06</code></td>
+                <td>Subprograma Natural</td>
+                <td>136</td>
+                <td>Entrada: <code>NQ06-CODG-SITC := L001-INDC-SITC-SIMU</code>; parâmetro de grupo <code>NQ06-LIST-PARM</code>; saída: <code>NQ06-CODG-RETN</code> (0 = OK)</td>
+                <td><span class="badge badge-miss">Fonte ausente</span></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-rep">FORM</span> <code>R9012001</code></td>
+                <td>Mapa/relatório</td>
+                <td>193, 220</td>
+                <td><code>WRITE(1) NOTITLE USING FORM 'R9012001'</code></td>
+                <td><span class="badge badge-miss">Layout ausente</span></td>
+              </tr>
+              <tr>
+                <td><code>MOVE-CAMPOS-NAO-NULL</code></td>
+                <td>Subrotina interna</td>
+                <td>199, 227–258</td>
+                <td>PERFORM interno; sem parâmetros</td>
+                <td>Presente no fonte</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <pre class="source"><span class="ln">135</span>NQ06-CODG-SITC := L001-INDC-SITC-SIMU
+<span class="ln">136</span><span class="kw">callnat</span> <span class="str">'N9013Q06'</span> NQ06-LIST-PARM
+<span class="ln">137</span><span class="kw">if</span> NQ06-CODG-RETN <span class="kw">ne</span> <span class="num">0</span>
+<span class="ln">138</span>  <span class="kw">write</span> <span class="str">'Erro! Parametro L001-INDC-SITC-SIMU nao cadastrado'</span></pre>
+      </div>
+    </section>
+
+    <!-- 12 ERROS -->
+    <section class="section open" id="sec-erros">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">12</span>
+        <h2>Tratamento de erros</h2>
+      </div>
+      <div class="section-body">
+        <h3>Erros de validação de entrada</h3>
+        <ul>
+          <li>Modelo: acumular (<code>WFL-TEM-ERRO</code>) + listar todas as mensagens + encerrar.</li>
+          <li>Não há retomada nem correção interativa após o bloco de validação.</li>
+        </ul>
+        <h3>Erros de runtime Adabas / Natural</h3>
+        <ul>
+          <li>Não existe bloco <code>ON ERROR</code> neste fonte.</li>
+          <li>Falha de <code>GET</code> (ISN inexistente), conflito de atualização ou erro Adabas propagam o comportamento padrão do Natural (não documentável sem ambiente).</li>
+        </ul>
+        <h3>Códigos de término</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Condição</th><th>Ação</th><th>Linha</th></tr></thead>
+            <tbody>
+              <tr><td>Erro de parâmetro + DEVICE=VIDEO</td><td><code>STOP</code></td><td>177–178</td></tr>
+              <tr><td>Erro de parâmetro + batch</td><td><code>TERMINATE 133</code></td><td>179–180</td></tr>
+              <tr><td>Sucesso (com ou sem commit)</td><td>queda no <code>END</code> (código 0 típico)</td><td>260</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 DEPENDENCIAS (AC3) -->
+    <section class="section open" id="sec-dependencias">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">13</span>
+        <h2>Inventário de dependências</h2>
+      </div>
+      <div class="section-body">
+        <h3>Por categoria</h3>
+        <h4>Data-definition (LDA/PDA)</h4>
+        <ul>
+          <li><code>L9012001</code> — parâmetros do programa (LOCAL USING). <em>Obrigatório. Ausente.</em></li>
+          <li><code>A9013Q06</code> — área da rotina de situação. <em>Obrigatório. Ausente.</em></li>
+          <li><code>L9013Q13</code> — LDA auxiliar S9013. <em>Obrigatório no DEFINE DATA. Ausente.</em></li>
+        </ul>
+        <h4>Rotinas</h4>
+        <ul>
+          <li><code>N9013Q06</code> — validação de código de situação (CALLNAT). <em>Obrigatório quando situação ? NULL. Ausente.</em></li>
+          <li><code>MOVE-CAMPOS-NAO-NULL</code> — subrotina interna (presente).</li>
+        </ul>
+        <h4>Relatórios / mapas</h4>
+        <ul>
+          <li><code>R9012001</code> — formulário de impressão ANTES/APÓS. <em>Obrigatório. Ausente.</em></li>
+        </ul>
+        <h4>Banco Adabas</h4>
+        <ul>
+          <li>Arquivo <code>D9013142-13</code> — cadastro de simulação. Acesso: leitura, alteração, exclusão.</li>
+          <li>View <code>D142-13-CADS-SIMU</code> — interface de programação do arquivo. <em>DDM ausente.</em></li>
+        </ul>
+        <h3>Tabela-resumo (Category, Name, Usage, Mandatory)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Category</th><th>Name</th><th>Usage</th><th>Mandatory</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Data-definition</td><td><code>L9012001</code></td><td>LDA com parâmetros de entrada (NUMERO-SMP, FUNCAO, ISN, EFETIVA, L001-*)</td><td>Sim</td></tr>
+              <tr><td>Data-definition</td><td><code>A9013Q06</code></td><td>Área NQ06-LIST-PARM / NQ06-CODG-SITC / NQ06-CODG-RETN</td><td>Sim</td></tr>
+              <tr><td>Data-definition</td><td><code>L9013Q13</code></td><td>LDA auxiliar do sistema S9013</td><td>Sim</td></tr>
+              <tr><td>Called routine</td><td><code>N9013Q06</code></td><td>Confirma existência do código de situação; leitura de cadastro (comportamento interno desconhecido)</td><td>Sim (se situação informada)</td></tr>
+              <tr><td>Report layout</td><td><code>R9012001</code></td><td>Impressão da imagem do registro ANTES e APÓS</td><td>Sim</td></tr>
+              <tr><td>Adabas file</td><td><code>D9013142-13</code></td><td>Arquivo físico de cadastro de simulação — <span class="badge badge-read">read</span> <span class="badge badge-upd">change</span> <span class="badge badge-del">delete</span></td><td>Sim</td></tr>
+              <tr><td>Adabas view</td><td><code>D142-13-CADS-SIMU</code></td><td>View de acesso ao arquivo — GET / UPDATE / DELETE / RESET</td><td>Sim</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 FLUXO OBJETOS -->
+    <section class="section open" id="sec-fluxo-objetos">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">14</span>
+        <h2>Fluxo entre objetos</h2>
+      </div>
+      <div class="section-body">
+        <div class="obj-flow">
+          <span class="obj-chip badge-prog" style="border-color:#1e40af">Operador / JCL</span>
+          <span class="obj-arrow-h">?</span>
+          <span class="obj-chip badge-prog" style="border-color:#1e40af">P9012001</span>
+          <span class="obj-arrow-h">?</span>
+          <span class="obj-chip badge-lda" style="border-color:#6b21a8">L9012001</span>
+        </div>
+        <div class="obj-flow">
+          <span class="obj-chip badge-prog" style="border-color:#1e40af">P9012001</span>
+          <span class="obj-arrow-h">? CALLNAT ?</span>
+          <span class="obj-chip badge-sub" style="border-color:#065f46">N9013Q06</span>
+          <span class="obj-arrow-h">via</span>
+          <span class="obj-chip badge-pda" style="border-color:#5b21b6">A9013Q06</span>
+        </div>
+        <div class="obj-flow">
+          <span class="obj-chip badge-prog" style="border-color:#1e40af">P9012001</span>
+          <span class="obj-arrow-h">? GET/UPD/DEL ?</span>
+          <span class="obj-chip badge-view" style="border-color:#155e75">D142-13-CADS-SIMU</span>
+          <span class="obj-arrow-h">?</span>
+          <span class="obj-chip badge-file" style="border-color:#991b1b">D9013142-13</span>
+        </div>
+        <div class="obj-flow">
+          <span class="obj-chip badge-prog" style="border-color:#1e40af">P9012001</span>
+          <span class="obj-arrow-h">? WRITE FORM ?</span>
+          <span class="obj-chip badge-rep" style="border-color:#9a3412">R9012001</span>
+          <span class="obj-arrow-h">?</span>
+          <span class="obj-chip" style="border-color:#64748b;background:#f1f5f9">Spool / relatório</span>
+        </div>
+        <div class="flowchart">                    +-----------+
+   INPUT/JCL ---> | P9012001  | ---LOCAL USING---> L9012001
+                    +-----+-----+                   A9013Q06
+                          |                         L9013Q13
+          +---------------+---------------+
+          |               |               |
+          v               v               v
+     N9013Q06      D142-13-CADS-SIMU   R9012001
+     (situacao)         |                |
+                        v                v
+                   D9013142-13        Impressao
+                   (Adabas)         ANTES / APOS</div>
+        <p>Na alteração, o caminho de dados de negócio é: parâmetros L001-* ? (filtro NULL) ? campos da view ? UPDATE ? (EFETIVA) END TRANSACTION ou BACKOUT.</p>
+      </div>
+    </section>
+
+    <!-- 15 PERFORMANCE -->
+    <section class="section open" id="sec-performance">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">15</span>
+        <h2>Performance</h2>
+      </div>
+      <div class="section-body">
+        <ul>
+          <li><strong>Complexidade:</strong> O(1) por execução — um único GET por ISN, no máximo um UPDATE ou DELETE, uma chamada CALLNAT condicional, duas impressões de formulário.</li>
+          <li><strong>Acesso por ISN:</strong> leitura direta posicional; não há laço nem pesquisa por descritor — excelente para manutenção pontual, inadequado como varredura em massa.</li>
+          <li><strong>CALLNAT:</strong> custo adicional apenas quando <code>L001-INDC-SITC-SIMU ? 'NULL'</code>; frequência depende do uso operacional.</li>
+          <li><strong>Transação curta:</strong> uma unidade de trabalho Adabas por execução — baixo risco de hold prolongado, desde que o programa não fique parado entre GET e END TRANSACTION em sessão interativa.</li>
+          <li><strong>Relatório:</strong> duas escritas de formulário; impacto depende do destino do report 1 (spool), não do banco.</li>
+        </ul>
+        <p>Não há evidência de buffer pooling customizado, prefetch ou processamento multi-registro neste objeto.</p>
+      </div>
+    </section>
+
+    <!-- 16 PROBLEMAS -->
+    <section class="section open" id="sec-problemas">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">16</span>
+        <h2>Problemas possíveis / fragilidades</h2>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Problema</th><th>Evidência</th><th>Severidade</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>P-01</td>
+                <td>Mensagem de erro de tipo de documento omite o valor <code>00</code> aceito pela regra («dif 02 e 04»).</td>
+                <td>Linhas 101–102 e 142–143</td>
+                <td>Baixa (usabilidade)</td>
+              </tr>
+              <tr>
+                <td>P-02</td>
+                <td>Sem tratamento explícito de ISN inexistente / falha de GET.</td>
+                <td>Linha 192; ausência de ON ERROR</td>
+                <td>Média</td>
+              </tr>
+              <tr>
+                <td>P-03</td>
+                <td>Variáveis <code>WAX-VALR-INTR</code> e <code>WAX-VALR-DECM</code> declaradas e não usadas.</td>
+                <td>Linhas 50–51</td>
+                <td>Baixa (higiene)</td>
+              </tr>
+              <tr>
+                <td>P-04</td>
+                <td>Validação monetária normaliza em <code>WAX-VALR-EDIT</code>, mas o MOVE usa <code>VAL()</code> sobre o texto original (com vírgula) — risco de conversão divergente.</td>
+                <td>125–133 vs 241; 156–164 vs 251</td>
+                <td>Média</td>
+              </tr>
+              <tr>
+                <td>P-05</td>
+                <td>CNPJ validado só por máscara numérica — sem DV.</td>
+                <td>Linhas 115–119</td>
+                <td>Baixa/Média (negócio)</td>
+              </tr>
+              <tr>
+                <td>P-06</td>
+                <td>Campos com AD=T ainda podem ser validados/aplicados se vierem preenchidos em batch — proteção de mapa não vale no INPUT batch.</td>
+                <td>67–83 + validações</td>
+                <td>Informativa</td>
+              </tr>
+              <tr>
+                <td>P-07</td>
+                <td>Comentário do MOVE em DATA-DOCM-COBR diz <code>/* N0009</code> enquanto a validação trata formato de 8 posições / data.</td>
+                <td>Linhas 151 vs 248</td>
+                <td>Baixa (documentação interna)</td>
+              </tr>
+              <tr>
+                <td>P-08</td>
+                <td>Dependência total de artefatos externos não versionados neste repositório — risco de drift documentação/produção.</td>
+                <td>LOCAL USING / CALLNAT / FORM</td>
+                <td>Alta (governança)</td>
+              </tr>
+              <tr>
+                <td>P-09</td>
+                <td>Ramo <code>ANY VALUE</code> com commit: comportamento pretendido para ALTERAR/EXCLUIR; <code>NONE VALUE</code> ignora — seguro após RN-02, mas acopla transação ao DECIDE de função.</td>
+                <td>Linhas 195–208</td>
+                <td>Baixa (manutenibilidade)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 MODERNIZACAO -->
+    <section class="section open" id="sec-modernizacao">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">17</span>
+        <h2>Sugestões de modernização</h2>
+      </div>
+      <div class="section-body">
+        <p><em>Escopo desta história: apenas consultivo — nenhuma migração foi implementada.</em></p>
+        <h3>Separação de responsabilidades</h3>
+        <ul>
+          <li>Extrair validações (RN-01–RN-16) para um módulo/serviço de domínio reutilizável, independente de Natural INPUT.</li>
+          <li>Isolar acesso a dados (GET/UPDATE/DELETE + transação) em repositório Adabas ou, na migração, em API de persistência.</li>
+          <li>Tratar relatório de auditoria como evento/log estruturado (JSON/PDF) em vez de FORM acoplado.</li>
+        </ul>
+        <h3>Exposição como serviço</h3>
+        <ul>
+          <li>API REST (ex.: <code>PATCH /simulacoes/{isn}</code>, <code>DELETE /simulacoes/{isn}</code>) com corpo parcial (equivalente ao NULL) e query/header <code>efetiva=true|false</code>.</li>
+          <li>Implementação candidata: <strong>Java / Quarkus</strong> (ou Spring) com bean de validação Bean Validation + serviço de aplicação transacional.</li>
+          <li>Substituir CALLNAT N9013Q06 por consulta a tabela/serviço de domínio de situações.</li>
+        </ul>
+        <h3>Riscos da migração</h3>
+        <ul>
+          <li>Sem DDM e sem N9013Q06/R9012001, há risco de mapear mal tipos numéricos (N15,2), datas e layout de auditoria.</li>
+          <li>Semântica de <code>VAL()</code> e máscaras Natural pode divergir de parsers Java.</li>
+          <li>Jobs JCL que dependem do código de retorno 133 precisam de contrato equivalente HTTP/batch.</li>
+          <li>ISN Adabas não deve vazar como identificador de negócio na API pública — preferir chave de negócio estável, se existir no arquivo (a confirmar na FDT).</li>
+        </ul>
+        <h3>Caminho recomendado (fases)</h3>
+        <ol>
+          <li>Completar pacote de artefatos ausentes e fechar o modelo de dados.</li>
+          <li>Testes de caracterização (golden files) do programa atual com EFETIVA=NAO e SIM.</li>
+          <li>Reimplementar validações + persistência em serviço; manter Natural como fachada temporária (strangler).</li>
+          <li>Migrar consumidores batch/online; desativar P9012001.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 18 ENTREGAVEIS -->
+    <section class="section open" id="sec-entregaveis">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">18</span>
+        <h2>Entregáveis finais</h2>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Entregável</th><th>Onde nesta documentação</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Resumo executivo</td><td><a href="#sec-executivo">Seção 1</a></td><td>Completo (com ressalva de análise parcial)</td></tr>
+              <tr><td>Resumo técnico</td><td><a href="#sec-tecnico">Seção 2</a></td><td>Completo</td></tr>
+              <tr><td>Inventário de dependências</td><td><a href="#sec-dependencias">Seção 13</a></td><td>Completo para referências do fonte</td></tr>
+              <tr><td>Fluxograma</td><td><a href="#sec-fluxo">Seção 4</a></td><td>Completo</td></tr>
+              <tr><td>Fluxo entre objetos</td><td><a href="#sec-fluxo-objetos">Seção 14</a></td><td>Completo</td></tr>
+              <tr><td>Regras de negócio + índice</td><td><a href="#sec-regras">Seção 9</a> e <a href="#sec-indice-regras">10</a></td><td>Completo (24 regras)</td></tr>
+              <tr><td>Problemas identificados</td><td><a href="#sec-problemas">Seção 16</a></td><td>Completo (9 itens)</td></tr>
+              <tr><td>Sugestões de modernização</td><td><a href="#sec-modernizacao">Seção 17</a></td><td>Completo (consultivo)</td></tr>
+              <tr><td>Dashboard (16 indicadores)</td><td><a href="#sec-dashboard">Seção 0</a></td><td>Completo</td></tr>
+              <tr><td>Página HTML interativa offline</td><td>Este arquivo</td><td>Completo</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Arquivo de entrega:</strong> <code>docs/P9012001-documentacao-tecnica.html</code> — único arquivo, CSS/JS embutidos, zero requisições externas.</p>
+      </div>
+    </section>
+
+    <!-- 19 FONTE -->
+    <section class="section" id="sec-fonte">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">19</span>
+        <h2>Código-fonte anotado (referência)</h2>
+      </div>
+      <div class="section-body">
+        <p>Trechos centrais com realce sintático. Fonte completo: <code>Codigo-natural/P9012001.NSP</code>.</p>
+        <h3>Validação e encerramento</h3>
+        <pre class="source"><span class="ln">087</span><span class="kw">decide for every condition</span>
+<span class="ln">088</span>  <span class="kw">when</span> NUMERO-SMP <span class="kw">eq</span> <span class="str">' '</span>
+<span class="ln">089</span>    <span class="kw">write</span> <span class="str">'Erro! Parametro NUMERO-SMP nao informado'</span>
+<span class="ln">090</span>    <span class="kw">move</span> <span class="kw">TRUE</span> <span class="kw">to</span> WFL-TEM-ERRO
+<span class="cmt">… (demais WHEN de validação até 169) …</span>
+<span class="ln">174</span><span class="kw">if</span> WFL-TEM-ERRO
+<span class="ln">177</span>  <span class="kw">if</span> *DEVICE = <span class="str">'VIDEO'</span>
+<span class="ln">178</span>    <span class="kw">stop</span>
+<span class="ln">179</span>  <span class="kw">else</span>
+<span class="ln">180</span>    <span class="kw">terminate</span> <span class="num">133</span>
+<span class="ln">181</span>  <span class="kw">end-if</span>
+<span class="ln">182</span><span class="kw">end-if</span></pre>
+        <h3>GET / ALTERAR / EXCLUIR / transação</h3>
+        <pre class="source"><span class="ln">192</span>G1. <span class="kw">GET</span> D142-13-CADS-SIMU NUMERO-ISN
+<span class="ln">193</span><span class="kw">WRITE</span>(<span class="num">1</span>) <span class="kw">NOTITLE USING FORM</span> <span class="str">'R9012001'</span>
+<span class="ln">195</span><span class="kw">decide on first value of</span> FUNCAO
+<span class="ln">196</span>  <span class="kw">value</span> <span class="str">'EXCLUIR'</span>
+<span class="ln">197</span>    <span class="kw">DELETE</span> (G1.)
+<span class="ln">198</span>  <span class="kw">value</span> <span class="str">'ALTERAR'</span>
+<span class="ln">199</span>    <span class="kw">perform</span> MOVE-CAMPOS-NAO-NULL
+<span class="ln">200</span>    <span class="kw">UPDATE</span> (G1.)
+<span class="ln">201</span>  <span class="kw">any value</span>
+<span class="ln">202</span>    <span class="kw">if</span> EFETIVA = <span class="str">'SIM'</span>
+<span class="ln">203</span>      <span class="kw">END TRANSACTION</span>
+<span class="ln">204</span>    <span class="kw">else</span>
+<span class="ln">205</span>      <span class="kw">BACKOUT TRANSACTION</span>
+<span class="ln">206</span>    <span class="kw">end-if</span>
+<span class="ln">209</span><span class="kw">end-decide</span></pre>
+      </div>
+    </section>
+
+    <!-- 20 SOBRE A PAGINA (AC4) -->
+    <section class="section open" id="sec-pagina">
+      <div class="section-header" onclick="toggleSec(this)">
+        <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5"/></svg>
+        <span class="sec-num">20</span>
+        <h2>Sobre esta página interativa</h2>
+      </div>
+      <div class="section-body">
+        <p>Esta é a entrega da documentação como <strong>um único arquivo HTML</strong>, utilizável offline.</p>
+        <ul>
+          <li>Menu lateral fixo com todas as seções; destaque automático da seção visível.</li>
+          <li>Navegação por âncoras e breadcrumb no topo.</li>
+          <li>Caixa de busca por programas, rotinas, relatórios, LDAs, views, arquivos Adabas, variáveis e regras.</li>
+          <li>Seções expansíveis com botões «Expandir tudo» / «Recolher tudo».</li>
+          <li>Botão «Voltar ao topo».</li>
+          <li>Tipos coloridos (badges), tabelas estilizadas e código com realce via CSS (sem bibliotecas externas).</li>
+          <li>Dashboard com 16 indicadores.</li>
+          <li><strong>Zero</strong> requisições de rede: nenhum CDN, fonte web ou script externo.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="doc-footer">
+      Documentação técnica P9012001 · S9013 SIAF · CHESF · Issue AX-1 · Análise estática do fonte NSP · Gerado para uso offline
+    </footer>
+  </div>
+</div>
+
+<button id="back-top" type="button" title="Voltar ao topo" aria-label="Voltar ao topo">?</button>
+
+<script>
+(function () {
+  const sections = Array.from(document.querySelectorAll('.section, #sec-aviso'));
+  const navLinks = Array.from(document.querySelectorAll('#side-nav a[data-sec]'));
+  const bcHere = document.getElementById('bc-here');
+  const searchBox = document.getElementById('search-box');
+  const searchResults = document.getElementById('search-results');
+  const backTop = document.getElementById('back-top');
+
+  window.toggleSec = function (headerEl) {
+    const sec = headerEl.closest('.section');
+    if (sec) sec.classList.toggle('open');
+  };
+
+  document.getElementById('btn-expand').addEventListener('click', function () {
+    document.querySelectorAll('.section').forEach(function (s) { s.classList.add('open'); });
+  });
+  document.getElementById('btn-collapse').addEventListener('click', function () {
+    document.querySelectorAll('.section').forEach(function (s) { s.classList.remove('open'); });
+  });
+
+  document.getElementById('menu-toggle').addEventListener('click', function () {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+
+  backTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  window.addEventListener('scroll', function () {
+    backTop.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  /* Search index */
+  const searchIndex = [
+    { type: 'programa', label: 'P9012001', tip: 'Programa Natural principal', target: 'sec-proposito' },
+    { type: 'rotina', label: 'N9013Q06', tip: 'CALLNAT validação de situação', target: 'sec-chamadas' },
+    { type: 'rotina', label: 'MOVE-CAMPOS-NAO-NULL', tip: 'Subrotina interna de cópia', target: 'sec-estruturas' },
+    { type: 'relatório', label: 'R9012001', tip: 'Formulário ANTES/APÓS', target: 'sec-saidas' },
+    { type: 'lda', label: 'L9012001', tip: 'LDA parâmetros de entrada (ausente)', target: 'sec-dependencias' },
+    { type: 'lda', label: 'A9013Q06', tip: 'Área parâmetros N9013Q06 (ausente)', target: 'sec-dependencias' },
+    { type: 'lda', label: 'L9013Q13', tip: 'LDA auxiliar S9013 (ausente)', target: 'sec-dependencias' },
+    { type: 'view', label: 'D142-13-CADS-SIMU', tip: 'View Adabas GET/UPDATE/DELETE', target: 'sec-banco' },
+    { type: 'arquivo', label: 'D9013142-13', tip: 'Arquivo Adabas de simulação', target: 'sec-banco' },
+    { type: 'variável', label: 'WFL-TEM-ERRO', tip: 'Flag de erro de validação', target: 'sec-estruturas' },
+    { type: 'variável', label: 'WAX-VALR-EDIT', tip: 'Buffer de edição de valores', target: 'sec-estruturas' },
+    { type: 'variável', label: 'WTL-STTS-REGS', tip: 'Status ANTES/APOS do relatório', target: 'sec-saidas' },
+    { type: 'variável', label: 'NUMERO-ISN', tip: 'ISN do registro alvo', target: 'sec-entradas' },
+    { type: 'variável', label: 'EFETIVA', tip: 'SIM grava / NAO rollback', target: 'sec-entradas' },
+    { type: 'variável', label: 'FUNCAO', tip: 'ALTERAR ou EXCLUIR', target: 'sec-entradas' },
+    { type: 'variável', label: 'NUMERO-SMP', tip: 'Documento autorizador', target: 'sec-entradas' },
+    { type: 'variável', label: 'L001-INDC-SITC-SIMU', tip: 'Situação validada via N9013Q06', target: 'sec-entradas' },
+    { type: 'variável', label: 'L001-NUMR-DOCM-COBR', tip: 'Doc. cobrança 9 dígitos', target: 'sec-entradas' },
+    { type: 'variável', label: 'NQ06-CODG-RETN', tip: 'Retorno da rotina de situação', target: 'sec-chamadas' },
+    { type: 'regra', label: 'RN-01 NUMERO-SMP', tip: 'SMP obrigatório', target: 'rn-01' },
+    { type: 'regra', label: 'RN-02 FUNCAO', tip: 'ALTERAR/EXCLUIR', target: 'rn-02' },
+    { type: 'regra', label: 'RN-03 ISN', tip: 'ISN ? 0', target: 'rn-03' },
+    { type: 'regra', label: 'RN-04 EFETIVA', tip: 'SIM/NAO', target: 'rn-04' },
+    { type: 'regra', label: 'RN-17 NULL', tip: 'NULL = não alterar', target: 'rn-17' },
+    { type: 'regra', label: 'RN-18 ALTERAR EXCLUIR', tip: 'Comportamento por função', target: 'rn-18' },
+    { type: 'regra', label: 'RN-19 EFETIVA SIM', tip: 'Commit somente com SIM', target: 'rn-19' },
+    { type: 'regra', label: 'RN-11 situação', tip: 'Cadastro via N9013Q06', target: 'rn-11' },
+    { type: 'regra', label: 'RN-20 validação acumulativa', tip: 'EVERY CONDITION', target: 'rn-20' },
+    { type: 'sistema', label: 'SIAF', tip: 'S9013 Sistema Aquisição e Fornecimento', target: 'sec-executivo' },
+    { type: 'sistema', label: 'CHESF', tip: 'Cliente', target: 'sec-executivo' },
+    { type: 'sistema', label: 'SMP-0232/2012', tip: 'Documento de criação', target: 'sec-proposito' },
+    { type: 'sistema', label: 'SMP-0405/2012', tip: 'Manutenção NUMR-DOCM-COBR N9', target: 'sec-proposito' }
+  ];
+
+  const typeClass = {
+    'programa': 'badge-prog',
+    'rotina': 'badge-sub',
+    'relatório': 'badge-rep',
+    'lda': 'badge-lda',
+    'view': 'badge-view',
+    'arquivo': 'badge-file',
+    'variável': 'badge-var',
+    'regra': 'badge-rule',
+    'sistema': 'badge-prog'
+  };
+
+  function openAndScroll(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const sec = el.classList.contains('section') ? el : el.closest('.section');
+    if (sec) sec.classList.add('open');
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    searchResults.classList.remove('open');
+    searchBox.value = '';
+  }
+
+  searchBox.addEventListener('input', function () {
+    const q = searchBox.value.trim().toLowerCase();
+    if (!q) {
+      searchResults.classList.remove('open');
+      searchResults.innerHTML = '';
+      return;
+    }
+    const hits = searchIndex.filter(function (item) {
+      return item.label.toLowerCase().indexOf(q) !== -1 ||
+             item.tip.toLowerCase().indexOf(q) !== -1 ||
+             item.type.toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 20);
+    if (!hits.length) {
+      searchResults.innerHTML = '<div class="sr-empty">Nenhum resultado para «' + q.replace(/</g,'') + '»</div>';
+    } else {
+      searchResults.innerHTML = hits.map(function (h) {
+        const cls = typeClass[h.type] || 'badge-var';
+        return '<a class="sr-item" href="#' + h.target + '" data-target="' + h.target + '">' +
+          '<span class="sr-type badge ' + cls + '">' + h.type + '</span>' +
+          '<strong>' + h.label + '</strong> — ' + h.tip + '</a>';
+      }).join('');
+      searchResults.querySelectorAll('.sr-item').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          e.preventDefault();
+          openAndScroll(a.getAttribute('data-target'));
+        });
+      });
+    }
+    searchResults.classList.add('open');
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!searchResults.contains(e.target) && e.target !== searchBox) {
+      searchResults.classList.remove('open');
+    }
+  });
+
+  /* Active section highlight */
+  const titles = {
+    'sec-dashboard': 'Dashboard',
+    'sec-aviso': 'Aviso de análise parcial',
+    'sec-executivo': 'Resumo executivo',
+    'sec-tecnico': 'Resumo técnico',
+    'sec-proposito': 'Propósito',
+    'sec-fluxo': 'Fluxo geral',
+    'sec-entradas': 'Entradas',
+    'sec-saidas': 'Saídas',
+    'sec-banco': 'Acesso a banco',
+    'sec-estruturas': 'Estruturas de dados',
+    'sec-regras': 'Regras de negócio',
+    'sec-indice-regras': 'Índice de regras',
+    'sec-chamadas': 'Chamadas externas',
+    'sec-erros': 'Tratamento de erros',
+    'sec-dependencias': 'Dependências',
+    'sec-fluxo-objetos': 'Fluxo entre objetos',
+    'sec-performance': 'Performance',
+    'sec-problemas': 'Problemas possíveis',
+    'sec-modernizacao': 'Modernização',
+    'sec-entregaveis': 'Entregáveis finais',
+    'sec-fonte': 'Código-fonte anotado',
+    'sec-pagina': 'Sobre esta página'
+  };
+
+  function setActive(id) {
+    navLinks.forEach(function (a) {
+      a.classList.toggle('active', a.getAttribute('data-sec') === id);
+    });
+    if (titles[id]) bcHere.textContent = titles[id];
+  }
+
+  const observer = new IntersectionObserver(function (entries) {
+    const visible = entries
+      .filter(function (e) { return e.isIntersecting; })
+      .sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+    if (visible.length) setActive(visible[0].target.id);
+  }, { rootMargin: '-20% 0px -60% 0px', threshold: 0.1 });
+
+  ['sec-dashboard','sec-aviso','sec-executivo','sec-tecnico','sec-proposito','sec-fluxo',
+   'sec-entradas','sec-saidas','sec-banco','sec-estruturas','sec-regras','sec-indice-regras',
+   'sec-chamadas','sec-erros','sec-dependencias','sec-fluxo-objetos','sec-performance',
+   'sec-problemas','sec-modernizacao','sec-entregaveis','sec-fonte','sec-pagina'
+  ].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+
+  navLinks.forEach(function (a) {
+    a.addEventListener('click', function () {
+      const id = a.getAttribute('data-sec');
+      const el = document.getElementById(id);
+      if (el && el.classList.contains('section')) el.classList.add('open');
+      document.getElementById('sidebar').classList.remove('open');
+    });
+  });
+})();
+</script>
+</body>
+</html>
