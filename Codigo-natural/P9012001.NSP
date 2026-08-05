@@ -1,0 +1,260 @@
+0010** =====================================================================
+0020*   ANTES DE INICIAR UM NOVO PROCEDIMENTO DE MANUTENCAO, VERIFICAR COM
+0030*   O COORDENADOR SE ESTE OBJETO JA ESTA NO AMBIENTE DE PRODUÇÃO.
+0040** =====================================================================
+0050*
+0060* ###    ##   #####              ###     ###
+0070* ####   ##                      ####   ####
+0080* #####  ##  #######  #######    ##### #####  #######  ##   ##  #######
+0090* ## ### ##       ##  ##   ##    ## ##### ##  ##   ##   ## ##        ##
+0100* ##  #####  #######  ##   ##    ##  ###  ##  ##   ##    ###    #######
+0110* ##   ####  ##   ##  ##   ##    ##   #   ##  #######    ###    ##   ##
+0120* ##    ###  ##   ##  ##   ##    ##       ##  ##        ## ##   ##   ##
+0130* ##     ##  #######  #######    ##       ##  #######  ##   ##  #######
+0140** =====================================================================
+0150*  Estou sendo alterado por...........: Edvilson Silva
+0160*  Autorizado pelo documento Chesf....: SMP-0405/2012
+0170*  Autorizado pelo documento Stefanini:
+0180** =====================================================================
+0190* CLIENTE      :  CHESF - CIA HIDRO ELETRICA DO SAO FRANCISCO
+0200* SISTEMA      :  S9013 - SIAF <Sist.Inform.Aquisicao e Fornecimento>
+0210*              :--------------------------------------------------------
+0220* OBJETO       :  P9012001
+0230* DATA         :  21/03/2012
+0240* ANALISTA     :  EDVILSON F SILVA
+0250* PROGRAMADOR  :  ALEXANDRE VIDAL
+0260*              :---------------------------------------------------
+0270* OBJETIVO     :  Alterar/Excluir registros via ISN em modo Batch
+0280*              :  do arquivo D9013142-13
+0290* DOCUMENTO    :  SMP-0232/2012
+0300* ----------------------------------------------------------------------
+0310* Manutencao
+0320*    Documento :  SMP-0405/2012
+0330*    Autor     :  Edvilson Silva
+0340*    Data      :  08/05/2012
+0350*    Objetivo  :  Alterar o tamanho do campo NUMR-DOCM-COBR de N8 p/ N9
+0360*              :  do arquivo D9013142-13.
+0370* ----------------------------------------------------------------------
+0380*
+0390DEFINE DATA /* =========================================================
+0400*
+0410*
+0420LOCAL USING L9012001
+0430LOCAL USING A9013Q06
+0440LOCAL USING L9013Q13
+0450*
+0460LOCAL
+0470*
+0480** ----- <WAX> Variaveis Auxiliares --------------------------------- **
+0490*
+05001 WAX-VALR-INTR                    (N0020)
+05101 WAX-VALR-DECM                    (N20,7)
+05201 WAX-VALR-EDIT                    (A0018)
+0530*
+0540** ----- <WFL> Variaveis Logicas ------------------------------------ **
+0550*
+05601 WFL-TEM-ERRO                     (L) INIT <FALSE>
+0570*
+0580** ----- <WTL> Variaveis do Formulario ------------------------------ **
+0590*
+06001 WTL-IDNF-FILE            (A0020)
+06101 WTL-STTS-REGS            (A0005)
+06201 WTL-USER-RESP            (A0010)
+0630*
+0640END-DEFINE /* ==========================================================
+0650*
+0660*
+0670INPUT NUMERO-SMP (AD=T)
+0680INPUT FUNCAO (AD=T)
+0690INPUT NUMERO-ISN
+0700INPUT EFETIVA
+0710*
+0720INPUT L001-CODG-TIPO-DOCM-SIMU
+0730INPUT L001-CODG-CATG-DOCM-SIMU(AD=T)
+0740INPUT L001-NUMR-CONT-MATL
+0750INPUT L001-NUMR-CNPJ-FORN-MATL
+0760INPUT L001-NUMR-PARC-MATL
+0770INPUT L001-VALR-DOCM-SIMU
+0780INPUT L001-INDC-SITC-SIMU(AD=T)
+0790INPUT L001-CODG-TIPO-DOCM-COBR
+0800INPUT L001-NUMR-DOCM-COBR
+0810INPUT L001-DATA-DOCM-COBR
+0820INPUT L001-VALR-DOCM-COBR
+0830INPUT L001-INDC-VISA-IC1(AD=T)
+0840*
+0850** ------< Validação dos dados de Entrada >-------------------------- **
+0860*
+0870decide for every condition
+0880  when NUMERO-SMP eq ' '
+0890    write 'Erro! Parametro NUMERO-SMP nao informado'
+0900    move TRUE to WFL-TEM-ERRO
+0910  when not(FUNCAO = 'ALTERAR' or = 'EXCLUIR')
+0920    write 'Erro! Parametro FUNCAO diferente de ALTERAR/EXCLUIR'
+0930    move TRUE to WFL-TEM-ERRO
+0940  when NUMERO-ISN EQ 0
+0950    write 'Erro! Parametro ISN nao informado'
+0960    move TRUE to WFL-TEM-ERRO
+0970  when not (EFETIVA = 'SIM' or = 'NAO')
+0980    write 'Erro! Parametro EFETIVA diferente de SIM/NAO'
+0990    move TRUE to WFL-TEM-ERRO
+1000  when L001-CODG-TIPO-DOCM-SIMU ne 'NULL' /* N0002
+1010    if not (L001-CODG-TIPO-DOCM-SIMU = '00' or = '02' or = '04')
+1020      write 'Erro! Parametro L001-CODG-TIPO-DOCM-SIMU dif 02 e 04'
+1030      move TRUE to WFL-TEM-ERRO
+1040    end-if
+1050  when L001-CODG-CATG-DOCM-SIMU ne 'NULL' /* A0001
+1060    if not (L001-CODG-CATG-DOCM-SIMU = 'B' or = 'R')
+1070      write 'Erro! Parametro L001-CODG-CATG-DOCM-SIMUdif B e R'
+1080      move TRUE to WFL-TEM-ERRO
+1090    end-if
+1100  when L001-NUMR-CONT-MATL ne 'NULL' /* N0010
+1110    if L001-NUMR-CONT-MATL ne mask (9999999999)
+1120      write 'Erro! Parametro L001-NUMR-CONT-MATL nao numerico (10 digitos)'
+1130      move TRUE to WFL-TEM-ERRO
+1140    end-if
+1150  when L001-NUMR-CNPJ-FORN-MATL ne 'NULL' /* N0014
+1160    if L001-NUMR-CNPJ-FORN-MATL ne mask (99999999999999)
+1170      write 'Erro! Parametro L001-NUMR-CNPJ-FORN-MATL nao numerico (14 digitos)'
+1180      move TRUE to WFL-TEM-ERRO
+1190    end-if
+1200  when L001-NUMR-PARC-MATL ne 'NULL' /* N0003
+1210    if L001-NUMR-PARC-MATL ne mask (999)
+1220      write 'Erro! Parametro L001-NUMR-PARC-MATL nao numerico (3 digitos)'
+1230      move TRUE to WFL-TEM-ERRO
+1240    end-if
+1250  when L001-VALR-DOCM-SIMU ne 'NULL' /* N15,2
+1260    WAX-VALR-EDIT := L001-VALR-DOCM-SIMU
+1270    examine WAX-VALR-EDIT for ',' delete first
+1280    move right WAX-VALR-EDIT to WAX-VALR-EDIT
+1290    examine WAX-VALR-EDIT for ' ' replace with '0'
+1300    if WAX-VALR-EDIT ne mask (999999999999999999)
+1310      write 'Erro! Parametro VALOR SIMULACAO nao numerico'
+1320      move TRUE to WFL-TEM-ERRO
+1330    end-if
+1340  when L001-INDC-SITC-SIMU ne 'NULL' /* A0002                           da
+1350    NQ06-CODG-SITC := L001-INDC-SITC-SIMU
+1360    callnat 'N9013Q06' NQ06-LIST-PARM
+1370    if NQ06-CODG-RETN ne 0
+1380      write 'Erro! Parametro L001-INDC-SITC-SIMU nao cadastrado'
+1390      move TRUE to WFL-TEM-ERRO
+1400    end-if
+1410  when L001-CODG-TIPO-DOCM-COBR ne 'NULL' /* N0002
+1420    if not (L001-CODG-TIPO-DOCM-COBR = '00' or = '02' or = '04')
+1430      write 'Erro! Parametro L001-CODG-TIPO-DOCM-COBR dif 02 e 04'
+1440      move TRUE to WFL-TEM-ERRO
+1450    end-if
+1460  when L001-NUMR-DOCM-COBR ne 'NULL' /* N0009
+1470    if L001-NUMR-DOCM-COBR ne mask (999999999)
+1480      write 'Erro! Parametro L001-NUMR-DOCM-COBR nao numerico (9 digitos)'
+1490      move TRUE to WFL-TEM-ERRO
+1500    end-if
+1510  when not (L001-DATA-DOCM-COBR eq 'NULL' or = '00000000') /* N0008
+1520    if L001-DATA-DOCM-COBR ne mask(YYYYMMDD)
+1530      write 'Erro! Parametro L001-DATA-DOCM-COBR ne YYYYMMDD'
+1540      move TRUE to WFL-TEM-ERRO
+1550    end-if
+1560  when L001-VALR-DOCM-COBR ne 'NULL' /* N15,2
+1570    WAX-VALR-EDIT := L001-VALR-DOCM-COBR
+1580    examine WAX-VALR-EDIT for ',' delete first
+1590    move right WAX-VALR-EDIT to WAX-VALR-EDIT
+1600    examine WAX-VALR-EDIT for ' ' replace with '0'
+1610    if WAX-VALR-EDIT ne mask (999999999999999999)
+1620      write 'Erro! Parametro VALOR COBRANCA nao numerico'
+1630      move TRUE to WFL-TEM-ERRO
+1640    end-if
+1650  when L001-INDC-VISA-IC1 ne 'NULL'  /* A0002
+1660    if not (L001-INDC-VISA-IC1 = '00' thru '19')
+1670      write 'Erro! Parametro L001-INDC-VISA-IC1 dif 00 a 19'
+1680      move TRUE to WFL-TEM-ERRO
+1690    end-if
+1700  when none
+1710    ignore
+1720end-decide
+1730*
+1740if WFL-TEM-ERRO
+1750  Write ' '
+1760  write 'Processo encerrado devido aos erros encontrados'
+1770  if *DEVICE = 'VIDEO'
+1780    stop
+1790  else
+1800    terminate 133
+1810  end-if
+1820end-if
+1830*
+1840** ------< Inicializacao de Variaveis >------------------------------ **
+1850*
+1860WTL-IDNF-FILE := 'D9013142-13'
+1870WTL-STTS-REGS := 'ANTES'
+1880WTL-USER-RESP := *USER
+1890*
+1900** ------< Gera antes dos Ajustes > --------------------------------- **
+1910*
+1920G1. GET D142-13-CADS-SIMU NUMERO-ISN
+1930WRITE(1) NOTITLE USING FORM 'R9012001'
+1940*
+1950decide on first value of FUNCAO
+1960  value 'EXCLUIR'
+1970    DELETE (G1.)
+1980  value 'ALTERAR'
+1990    perform MOVE-CAMPOS-NAO-NULL
+2000    UPDATE (G1.)
+2010  any value
+2020    if EFETIVA = 'SIM'
+2030      END TRANSACTION
+2040    else
+2050      BACKOUT TRANSACTION
+2060    end-if
+2070  none value
+2080    ignore
+2090end-decide
+2100*
+2110** ------< Processamento >------------------------------------------- **
+2120*
+2130WTL-STTS-REGS := 'APOS'
+2140*
+2150if FUNCAO = 'EXCLUIR'
+2160  RESET D142-13-CADS-SIMU
+2170end-if
+2180*
+2190NEWPAGE(1)
+2200WRITE(1) NOTITLE USING FORM 'R9012001'
+2210*
+2220** ------< Procedimentos de Finalizacao >---------------------------- **
+2230*
+2240*
+2250** ------< Area de trabalho das Subrotinas Internas >---------------- **
+2260*
+2270DEFINE SUBROUTINE MOVE-CAMPOS-NAO-NULL
+2280*
+2290decide for every condition
+2300  when L001-CODG-TIPO-DOCM-SIMU ne 'NULL' /* N0002
+2310    D142-13-CADS-SIMU.CODG-TIPO-DOCM-SIMU := val(L001-CODG-TIPO-DOCM-SIMU)
+2320  when L001-CODG-CATG-DOCM-SIMU ne 'NULL' /* A0001
+2330    D142-13-CADS-SIMU.CODG-CATG-DOCM-SIMU := L001-CODG-CATG-DOCM-SIMU
+2340  when L001-NUMR-CONT-MATL ne 'NULL' /* N0010
+2350    D142-13-CADS-SIMU.NUMR-CONT-MATL := val(L001-NUMR-CONT-MATL)
+2360  when L001-NUMR-CNPJ-FORN-MATL ne 'NULL' /* N0014
+2370    D142-13-CADS-SIMU.NUMR-CNPJ-FORN-MATL :=val(L001-NUMR-CNPJ-FORN-MATL)
+2380  when L001-NUMR-PARC-MATL ne 'NULL' /* N0003
+2390    D142-13-CADS-SIMU.NUMR-PARC-MATL := val(L001-NUMR-PARC-MATL)
+2400  when L001-VALR-DOCM-SIMU ne 'NULL' /* N15,2
+2410    D142-13-CADS-SIMU.VALR-DOCM-SIMU := val(L001-VALR-DOCM-SIMU)
+2420  when L001-INDC-SITC-SIMU ne 'NULL' /* A0002                           da
+2430    D142-13-CADS-SIMU.INDC-SITC-SIMU := L001-INDC-SITC-SIMU
+2440  when L001-CODG-TIPO-DOCM-COBR ne 'NULL' /* N0002
+2450    D142-13-CADS-SIMU.CODG-TIPO-DOCM-COBR := val(L001-CODG-TIPO-DOCM-COBR)
+2460  when L001-NUMR-DOCM-COBR ne 'NULL' /* N0009
+2470    D142-13-CADS-SIMU.NUMR-DOCM-COBR := val(L001-NUMR-DOCM-COBR)
+2480  when L001-DATA-DOCM-COBR ne 'NULL' /* N0009
+2490    D142-13-CADS-SIMU.DATA-DOCM-COBR := val(L001-DATA-DOCM-COBR)
+2500  when L001-VALR-DOCM-COBR ne 'NULL' /* N15,2
+2510    D142-13-CADS-SIMU.VALR-DOCM-COBR := val(L001-VALR-DOCM-COBR)
+2520  when L001-INDC-VISA-IC1 ne 'NULL'  /* A0002
+2530    D142-13-CADS-SIMU.INDC-VISA-IC1 := val(L001-INDC-VISA-IC1)
+2540  when none
+2550    ignore
+2560end-decide
+2570*
+2580END-SUBROUTINE
+2590*
+2600END
