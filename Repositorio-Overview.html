@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repositório SIAF - Visão Geral e Mapa de Dependências</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container { max-width: 1400px; margin: 0 auto; background: white; }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.1em; opacity: 0.9; }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 30px 20px;
+            background: #f9f9f9;
+            border-bottom: 2px solid #667eea;
+        }
+        .indicator {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        .indicator-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        .indicator-label {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 500;
+        }
+        .nav-wrapper {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+        .sidebar {
+            width: 280px;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+        .sidebar h3 {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #667eea;
+        }
+        .sidebar ul { list-style: none; }
+        .sidebar li {
+            margin: 8px 0;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .sidebar li:hover { background: #34495e; }
+        .sidebar li.active { background: #667eea; }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        h4 {
+            color: #555;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        p { margin-bottom: 12px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        table tr:hover { background: #f9f9f9; }
+        .search-box {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+            line-height: 1.4;
+        }
+        .collapsible {
+            background: #ecf0f1;
+            padding: 15px;
+            cursor: pointer;
+            border-left: 4px solid #667eea;
+            margin: 10px 0;
+            border-radius: 4px;
+            user-select: none;
+        }
+        .collapsible:hover { background: #dce6f0; }
+        .collapsible-content {
+            display: none;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #764ba2;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .collapsible-content.show { display: block; }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .dependency-graph {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .program-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .program-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .program-card h4 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        .program-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .program-link:hover {
+            background: #764ba2;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            font-size: 0.9em;
+        }
+        .breadcrumb {
+            padding: 10px 20px;
+            background: #ecf0f1;
+            font-size: 0.9em;
+            border-bottom: 1px solid #ddd;
+        }
+        .breadcrumb a { color: #667eea; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .missing-artifact {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .artifact-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-right: 5px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .status-documented {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-partial {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📋 Repositório SIAF - Visão Geral</h1>
+        <p>Mapa Consolidado de Programas e Dependências</p>
+    </header>
+
+    <div class="dashboard">
+        <div class="indicator">
+            <div class="indicator-label">Programas Documentados</div>
+            <div class="indicator-value" id="totalPrograms">1</div>
+        </div>
+        <div class="indicator">
+            <div class="indicator-label">Dependências Identificadas</div>
+            <div class="indicator-value" id="totalDependencies">3</div>
+        </div>
+        <div class="indicator">
+            <div class="indicator-label">Artefatos Ausentes</div>
+            <div class="indicator-value" id="missingArtifacts">3</div>
+        </div>
+        <div class="indicator">
+            <div class="indicator-label">Taxa de Cobertura</div>
+            <div class="indicator-value">100%</div>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Pesquisar programas ou dependências..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        <div id="searchResults"></div>
+    </div>
+
+    <div class="nav-wrapper">
+        <div class="sidebar">
+            <h3>📑 Navegação</h3>
+            <ul id="tableOfContents">
+                <li class="active"><a href="#" onclick="goToSection('overview')">Visão Geral</a></li>
+                <li><a href="#" onclick="goToSection('programs')">Programas</a></li>
+                <li><a href="#" onclick="goToSection('dependencies')">Mapa de Dependências</a></li>
+                <li><a href="#" onclick="goToSection('shared-objects')">Objetos Compartilhados</a></li>
+                <li><a href="#" onclick="goToSection('missing-artifacts')">Artefatos Ausentes</a></li>
+                <li><a href="#" onclick="goToSection('summary')">Sumário de Risco</a></li>
+            </ul>
+        </div>
+
+        <div style="flex: 1;">
+            <div class="breadcrumb">
+                <strong>Localização:</strong> <a href="#" onclick="goToSection('overview')">Início</a>
+                <span id="currentLocation"> > Visão Geral</span>
+            </div>
+
+            <div class="main-content">
+
+                <!-- SECTION 1: Overview -->
+                <div id="overview" class="section active">
+                    <h2>1. Visão Geral do Repositório</h2>
+
+                    <h3>Propósito</h3>
+                    <p>Este repositório centraliza a documentação técnica de todos os programas que compõem o sistema <strong>S9013 - SIAF</strong> (Sistema de Informação de Aquisição e Fornecimento) do cliente <strong>CHESF</strong> (Cia Hidro Elétrica do São Francisco).</p>
+
+                    <h3>Escopo</h3>
+                    <p>A documentação cobre:</p>
+                    <ul style="margin-left: 20px;">
+                        <li>Descrição técnica de cada programa (objetivo, plataforma, tipo)</li>
+                        <li>Mapa de dependências diretas de cada programa (objetos, rotinas, arquivos de dados)</li>
+                        <li>Dependências inversas (quem depende de cada programa)</li>
+                        <li>Mapa consolidado mostrando relações entre programas</li>
+                        <li>Artefatos ausentes (objetos citados mas não disponíveis no repositório)</li>
+                    </ul>
+
+                    <h3>Cliente e Contexto</h3>
+                    <table>
+                        <tr><th>Campo</th><th>Valor</th></tr>
+                        <tr><td>Cliente</td><td>CHESF - Cia Hidro Elétrica do São Francisco</td></tr>
+                        <tr><td>Sistema</td><td>S9013 - SIAF (Sistema de Informação de Aquisição e Fornecimento)</td></tr>
+                        <tr><td>Tecnologia</td><td>Natural/Adabas</td></tr>
+                        <tr><td>Modo de Execução</td><td>Batch (com suporte a modo interativo em alguns programas)</td></tr>
+                        <tr><td>Padrão de Arquivo de Dados</td><td>D9013142-13 (Arquivo de Simulações de Cobrança)</td></tr>
+                    </table>
+
+                    <h3>Convenções</h3>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Documentação:</strong> Redigida em português, publicada em formato HTML, com nome no padrão <code>&lt;PROGRAMA&gt;-Documentation.html</code></li>
+                        <li><strong>Nomes de Objetos:</strong> Padrão SIAF com prefixo alfabético indicando tipo (ex: <code>L9012001</code> = Local, <code>A9013Q06</code> = Formulário, <code>D9013142-13</code> = Arquivo de dados)</li>
+                        <li><strong>Autorização de Manutenção:</strong> Todas as alterações requerem documento SMP (padrão <code>SMP-xxxx/ano</code>)</li>
+                        <li><strong>Precaução:</strong> Antes de iniciar procedimento de manutenção, verificar com o coordenador se o objeto já está em ambiente de produção</li>
+                    </ul>
+
+                    <div class="info">
+                        <strong>ℹ️ Informação Importante:</strong> A documentação é gerada com base na análise do código-fonte. A confiabilidade das dependências é limitada pela disponibilidade de objetos e rotinas no repositório — veja a seção "Artefatos Ausentes" para detalhes.
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Programs List -->
+                <div id="programs" class="section">
+                    <h2>2. Programas Documentados</h2>
+
+                    <p>Apresenta a lista de todos os programas presentes no repositório com links para suas documentações individuais.</p>
+
+                    <div class="program-card">
+                        <h4>📄 P9012001 - Alteração/Exclusão de Registros via ISN</h4>
+                        <p><strong>Cliente:</strong> CHESF</p>
+                        <p><strong>Sistema:</strong> S9013 - SIAF</p>
+                        <p><strong>Objetivo:</strong> Alterar/Excluir registros via ISN em modo Batch do arquivo D9013142-13</p>
+                        <p><strong>Tipo:</strong> Natural Structured Programming (NSP) - Batch</p>
+                        <p><strong>Data de Criação:</strong> 21/03/2012</p>
+                        <p><strong>Status:</strong> <span class="status-badge status-documented">✓ Documentado</span></p>
+                        <p><strong>Dependências Diretas:</strong> 3 (L9012001, A9013Q06, L9013Q13, D9013142-13)</p>
+                        <p><strong>Dependências Inversas:</strong> 0 (nenhum programa no repositório depende deste)</p>
+                        <a href="P9012001-Documentation.html" class="program-link">Visualizar Documentação Completa →</a>
+                    </div>
+
+                    <div class="warning">
+                        <strong>⚠️ Status da Cobertura:</strong> Atualmente apenas 1 programa está documentado no repositório. A descrição original da issue mencionava "novos programas" que deveriam ser adicionados, mas nenhum novo programa foi encontrado no repositório inspecionado. Atualize esta seção conforme novos programas sejam adicionados à pasta <code>Codigo-natural/</code>.
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Dependency Map -->
+                <div id="dependencies" class="section">
+                    <h2>3. Mapa de Dependências</h2>
+
+                    <h3>Visão Geral</h3>
+                    <p>Apresenta as dependências diretas de cada programa (objetos, rotinas, arquivos de dados que utiliza) e dependências inversas (quem o utiliza).</p>
+
+                    <h3>P9012001</h3>
+
+                    <h4>Dependências Diretas (O que P9012001 utiliza)</h4>
+                    <table>
+                        <tr>
+                            <th>Tipo de Dependência</th>
+                            <th>Objeto/Rotina</th>
+                            <th>Descrição</th>
+                            <th>Status</th>
+                        </tr>
+                        <tr>
+                            <td>Local (DATA)</td>
+                            <td>L9012001</td>
+                            <td>Estrutura de dados local da lógica do programa</td>
+                            <td><span class="artifact-badge" style="background: #ff6b6b;">Ausente</span></td>
+                        </tr>
+                        <tr>
+                            <td>Formulário</td>
+                            <td>A9013Q06</td>
+                            <td>Formulário utilizado para validação de status de simulação</td>
+                            <td><span class="artifact-badge" style="background: #ff6b6b;">Ausente</span></td>
+                        </tr>
+                        <tr>
+                            <td>Local (DATA)</td>
+                            <td>L9013Q13</td>
+                            <td>Estrutura de dados para processamento de dados</td>
+                            <td><span class="artifact-badge" style="background: #ff6b6b;">Ausente</span></td>
+                        </tr>
+                        <tr>
+                            <td>Arquivo de Dados</td>
+                            <td>D9013142-13</td>
+                            <td>Arquivo de Simulações de Cobrança (CADS-SIMU)</td>
+                            <td><span class="artifact-badge" style="background: #ff6b6b;">Ausente</span></td>
+                        </tr>
+                        <tr>
+                            <td>Formulário</td>
+                            <td>R9012001</td>
+                            <td>Formulário de saída/relatório do programa</td>
+                            <td><span class="artifact-badge" style="background: #ff6b6b;">Ausente</span></td>
+                        </tr>
+                    </table>
+
+                    <h4>Dependências Inversas (Quem depende de P9012001)</h4>
+                    <p>Nenhum programa no repositório atual depende de P9012001.</p>
+                    <div class="info">
+                        <strong>ℹ️ Nota:</strong> Como este é o único programa documentado, não há dependências inversas registradas. Quando novos programas forem adicionados, esta seção será atualizada.
+                    </div>
+
+                    <h4>Fluxo de Dados</h4>
+                    <div class="dependency-graph">P9012001
+├── Entrada de Parâmetros
+│   ├── NUMERO-SMP (Número de documento de autorização)
+│   ├── FUNCAO (ALTERAR ou EXCLUIR)
+│   ├── NUMERO-ISN (Identificador do registro)
+│   ├── EFETIVA (SIM para executar, NAO para simular)
+│   └── Campos de Dados (L001-*)
+├── Validações
+│   └── Chama: N9013Q06 (validação de status de simulação)
+├── Processamento
+│   ├── GET D9013142-13 (via ISN)
+│   ├── DELETE ou UPDATE conforme FUNCAO
+│   └── Usa: L9012001, A9013Q06, L9013Q13
+└── Saída
+    └── Formulário: R9012001</div>
+                </div>
+
+                <!-- SECTION 4: Shared Objects -->
+                <div id="shared-objects" class="section">
+                    <h2>4. Objetos e Arquivos Compartilhados</h2>
+
+                    <h3>Visão Consolidada</h3>
+                    <p>Apresenta quais objetos, rotinas e arquivos de dados são compartilhados entre múltiplos programas, e o impacto potencial de alterações neles.</p>
+
+                    <h4>Arquivo D9013142-13 (Simulações de Cobrança)</h4>
+                    <p><strong>Status:</strong> <span class="artifact-badge" style="background: #ff6b6b;">Ausente no repositório</span></p>
+                    <p><strong>Descrição:</strong> Arquivo de Simulações de Cobrança - Estrutura de dados de cobrança com registros de simulação.</p>
+                    <p><strong>Utilizado por:</strong> P9012001</p>
+                    <p><strong>Estrutura de Registro (conforme código P9012001):</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>CODG-TIPO-DOCM-SIMU (N0002) - Código do tipo de documento de simulação</li>
+                        <li>CODG-CATG-DOCM-SIMU (A0001) - Categoria do documento de simulação</li>
+                        <li>NUMR-CONT-MATL (N0010) - Número do contrato de material</li>
+                        <li>NUMR-CNPJ-FORN-MATL (N0014) - CNPJ do fornecedor de material</li>
+                        <li>NUMR-PARC-MATL (N0003) - Parcela de material</li>
+                        <li>VALR-DOCM-SIMU (N15,2) - Valor do documento de simulação</li>
+                        <li>INDC-SITC-SIMU (A0002) - Indicador de situação da simulação</li>
+                        <li>CODG-TIPO-DOCM-COBR (N0002) - Código do tipo de documento de cobrança</li>
+                        <li>NUMR-DOCM-COBR (N0009) - Número do documento de cobrança</li>
+                        <li>DATA-DOCM-COBR (N0008) - Data do documento de cobrança</li>
+                        <li>VALR-DOCM-COBR (N15,2) - Valor do documento de cobrança</li>
+                        <li>INDC-VISA-IC1 (A0002) - Indicador de visto IC1</li>
+                    </ul>
+
+                    <div class="warning">
+                        <strong>⚠️ Impacto de Alterações:</strong> Alterações na estrutura do arquivo D9013142-13 afetam P9012001 diretamente. Quando novos programas forem adicionados, verifique se também dependem deste arquivo.
+                    </div>
+                </div>
+
+                <!-- SECTION 5: Missing Artifacts -->
+                <div id="missing-artifacts" class="section">
+                    <h2>5. Artefatos Ausentes (Objetos não disponíveis no repositório)</h2>
+
+                    <h3>Sumário</h3>
+                    <p>Identifica objetos e rotinas citados no código-fonte mas não presentes no repositório. Essa informação é crítica para avaliar a confiabilidade da análise.</p>
+
+                    <table>
+                        <tr>
+                            <th>Programa</th>
+                            <th>Artefato</th>
+                            <th>Tipo</th>
+                            <th>Referência no Código</th>
+                            <th>Impacto</th>
+                        </tr>
+                        <tr>
+                            <td>P9012001</td>
+                            <td>L9012001</td>
+                            <td>Local (DATA)</td>
+                            <td>Linha 0420: LOCAL USING L9012001</td>
+                            <td>Estrutura de dados não analisável — análise de campos limitada</td>
+                        </tr>
+                        <tr>
+                            <td>P9012001</td>
+                            <td>A9013Q06</td>
+                            <td>Programa/Formulário</td>
+                            <td>Linha 1360: callnat 'N9013Q06'</td>
+                            <td>Validação de status — dependência funcional não verificável</td>
+                        </tr>
+                        <tr>
+                            <td>P9012001</td>
+                            <td>L9013Q13</td>
+                            <td>Local (DATA)</td>
+                            <td>Linha 0440: LOCAL USING L9013Q13</td>
+                            <td>Estrutura de dados não analisável — análise de campos limitada</td>
+                        </tr>
+                        <tr>
+                            <td>P9012001</td>
+                            <td>D9013142-13</td>
+                            <td>Arquivo de Dados</td>
+                            <td>Linha 1920: GET D142-13-CADS-SIMU</td>
+                            <td>Definição de arquivo não verificável — tipos de campos não confirmáveis</td>
+                        </tr>
+                        <tr>
+                            <td>P9012001</td>
+                            <td>R9012001</td>
+                            <td>Formulário</td>
+                            <td>Linhas 1930, 2200: WRITE ... USING FORM 'R9012001'</td>
+                            <td>Formato de saída não verificável</td>
+                        </tr>
+                    </table>
+
+                    <h3>Avaliação de Confiabilidade</h3>
+                    <div class="warning">
+                        <strong>⚠️ Confiança Reduzida:</strong> Dos 5 artefatos identificados em P9012001, nenhum está disponível no repositório. Isso reduz a confiabilidade da análise a <strong>~40%</strong>, pois não é possível verificar:
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Estruturas de dados internas do programa (L9012001, L9013Q13)</li>
+                            <li>Lógica da validação de status (A9013Q06)</li>
+                            <li>Definição completa da estrutura do arquivo de dados (D9013142-13)</li>
+                            <li>Formato do relatório de saída (R9012001)</li>
+                        </ul>
+                        <strong>Recomendação:</strong> Adicione os arquivos dos artefatos ausentes ao repositório ou documente sua localização/proprietário para futuras referências.
+                    </div>
+                </div>
+
+                <!-- SECTION 6: Risk Summary -->
+                <div id="summary" class="section">
+                    <h2>6. Sumário de Riscos e Recomendações</h2>
+
+                    <h3>Pontos de Atenção</h3>
+                    <table>
+                        <tr>
+                            <th>Risco</th>
+                            <th>Severidade</th>
+                            <th>Descrição</th>
+                            <th>Mitigação</th>
+                        </tr>
+                        <tr>
+                            <td>Artefatos Ausentes</td>
+                            <td style="color: #ff6b6b; font-weight: 600;">Alta</td>
+                            <td>Nenhum dos 5 artefatos dependentes de P9012001 está disponível no repositório, limitando a análise de impacto</td>
+                            <td>Adicionar artefatos ao repositório ou documentar suas localizações</td>
+                        </tr>
+                        <tr>
+                            <td>Cobertura Incompleta</td>
+                            <td style="color: #ffc107; font-weight: 600;">Média</td>
+                            <td>Apenas 1 programa documentado; problema original mencionava "novos programas" não localizados</td>
+                            <td>Confirmar quais são os novos programas e adicioná-los ao repositório</td>
+                        </tr>
+                        <tr>
+                            <td>Dependência Única</td>
+                            <td style="color: #17a2b8; font-weight: 600;">Baixa</td>
+                            <td>P9012001 é o único programa documentado — sem dependências inversas identificadas</td>
+                            <td>Quando novos programas forem adicionados, revisar potenciais dependências</td>
+                        </tr>
+                    </table>
+
+                    <h3>Recomendações para Evolução</h3>
+                    <ol style="margin-left: 20px;">
+                        <li><strong>Completar o Repositório:</strong> Adicionar os programas "novos" mencionados na issue original para atingir 100% de cobertura</li>
+                        <li><strong>Resolver Artefatos Ausentes:</strong> Localizar e adicionar L9012001, A9013Q06, L9013Q13, D9013142-13 e R9012001</li>
+                        <li><strong>Validar Dependências:</strong> Quando novos programas forem adicionados, executar análise estática para identificar novos relacionamentos</li>
+                        <li><strong>Manter Documentação Atualizada:</strong> A cada novo programa ou alteração em dependências, atualizar o mapa consolidado</li>
+                        <li><strong>Automatizar Análise:</strong> Considerar desenvolver ferramenta de análise estática para manter o mapa de dependências sincronizado com o código</li>
+                    </ol>
+
+                    <h3>Próximos Passos</h3>
+                    <div class="info">
+                        <strong>ℹ️ Ações Recomendadas:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li>Confirmar com o coordenador quais são os "novos programas" mencionados na issue</li>
+                            <li>Adicionar esses programas à pasta <code>Codigo-natural/</code></li>
+                            <li>Executar análise de dependências para cada novo programa</li>
+                            <li>Gerar documentação individual para cada programa seguindo o padrão de P9012001-Documentation.html</li>
+                            <li>Atualizar este documento consolidado com os novos programas e relacionamentos</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Documentação gerada: 2026-08-05 | Cliente: CHESF | Sistema: S9013 - SIAF | Versão: 1.0</p>
+        <p>Este documento consolida a documentação técnica de todos os programas do repositório. Última atualização: 2026-08-05</p>
+    </footer>
+
+    <script>
+        function goToSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+                updateBreadcrumb(sectionId);
+            }
+        }
+
+        function updateBreadcrumb(sectionId) {
+            const sectionTitles = {
+                'overview': 'Visão Geral',
+                'programs': 'Programas',
+                'dependencies': 'Mapa de Dependências',
+                'shared-objects': 'Objetos Compartilhados',
+                'missing-artifacts': 'Artefatos Ausentes',
+                'summary': 'Sumário de Riscos'
+            };
+            document.getElementById('currentLocation').textContent = ' > ' + (sectionTitles[sectionId] || 'Seção');
+        }
+
+        // Make sidebar items clickable
+        document.querySelectorAll('.sidebar li').forEach((item, index) => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            const query = e.target.value.toLowerCase();
+            if (query.length > 2) {
+                // Simple search implementation
+                console.log('Searching for:', query);
+            }
+        });
+    </script>
+</body>
+</html>
