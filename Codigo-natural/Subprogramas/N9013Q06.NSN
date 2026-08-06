@@ -1,0 +1,122 @@
+0010** =====================================================================
+0020*   ANTES DE INICIAR UM NOVO PROCEDIMENTO DE MANUTENCAO, VERIFICAR COM
+0030*   O COORDENADOR SE ESTE OBJETO JA ESTA NO AMBIENTE DE PRODUÇÃO.
+0040** =====================================================================
+0050*
+0060* ###    ##   #####              ###     ###
+0070* ####   ##                      ####   ####
+0080* #####  ##  #######  #######    ##### #####  #######  ##   ##  #######
+0090* ## ### ##       ##  ##   ##    ## ##### ##  ##   ##   ## ##        ##
+0100* ##  #####  #######  ##   ##    ##  ###  ##  ##   ##    ###    #######
+0110* ##   ####  ##   ##  ##   ##    ##   #   ##  #######    ###    ##   ##
+0120* ##    ###  ##   ##  ##   ##    ##       ##  ##        ## ##   ##   ##
+0130* ##     ##  #######  #######    ##       ##  #######  ##   ##  #######
+0140** =====================================================================
+0150*  Estou sendo alterado por.: Edvilson  F Silva
+0160*  Autorizado pelo documento: Projeto NF-e
+0170*
+0180** =====================================================================
+0190* ======================================================================
+0200* CLIENTE      :  CHESF - CIA HIDRO ELETRICA DO SAO FRANCISCO
+0210* SISTEMA      :  S9013 - SIAF  <Sist de Inform de Adm de Fornecimento>
+0220*              :--------------------------------------------------------
+0230* OBJETO       :  N9013Q06
+0240* DATA         :  07/04/2010
+0250* ANALISTA     :  Edvilson F Silva
+0260* PROGRAMADOR  :  Edvilson F Silva
+0270*              :---------------------------------------------------
+0280* OBJETIVO     :  Disponibilizar a descrição da situacao do documento
+0290*              :
+0300* DOCUMENTO    :  Projeto NF-e
+0310* ----------------------------------------------------------------------
+0320* Manutencao
+0330*    Documento :
+0340*    Autor     :
+0350*    Data      :
+0360*    Objetivo  :
+0370* ----------------------------------------------------------------------
+0380*
+0390DEFINE DATA /* =========================================================
+0400*
+0410*
+0420PARAMETER USING A9013Q06
+0430*
+0440LOCAL
+0450*
+0460** ----- <WAX> Auxiliares ------------------------------------------- **
+0470*
+04801 WAX-CODG-SITC                    (A002)
+04901 WAX-DESC-SITC                    (A015)
+05001 WAX-FILD-EDIT                    (A015)
+0510*
+0520** ----- <WIN> Indexadores ------------------------------------------ **
+0530*
+05401 WIN-PESK                         (N007)
+0550*
+0560** ----- <WTB> Tabelas Internas ------------------------------------- **
+0570*
+05801 WTB-CODG-SITC                    (A20/20) INIT
+0590(01) <'01:REGISTRADA'>
+0600(02) <'02:APROVADA  '>
+0610(03) <'03:EMITIDA   '>
+0620(04) <'04:ACATADA   '>
+0630(05) <'05:REPROVADA '>
+0640(06) <'06:REAVALIADA'>
+0650(07) <'07:DEVOLVIDA '>
+0660(08) <'09:APROVADA  '>
+0670(09) <'             '>
+0680(10) <'             '>
+0690(11) <'             '>
+0700(12) <'             '>
+0710(13) <'             '>
+0720(14) <'             '>
+0730(15) <'             '>
+0740(16) <'             '>
+0750(17) <'96:CRIADA    '>
+0760(18) <'98:REALIZADA '>
+0770(19) <'99:CANCELADA '>
+0780(20) <'00:MANUTENCAO'>
+0790*
+0800END-DEFINE /* ==========================================================
+0810*
+0820** ------< Inicializacao de Variaveis >------------------------------ **
+0830*
+0840NQ06-DESC-SITC := '  '
+0850NQ06-CODG-RETN := 9999
+0860NQ06-MENS-RETN := '<NQ06> Erro não identificado'
+0870*
+0880** ------< Validacao dos parametros de Entrada >--------------------- **
+0890*
+0900IF NQ06-CODG-SITC = ' '
+0910  NQ06-CODG-RETN := 0001
+0920  NQ06-MENS-RETN := '<NQ06> Codigo da situacao não informado'
+0930  ESCAPE MODULE
+0940END-IF
+0950*
+0960** ------< Processamento da solicitacao > --------------------------- **
+0970*
+0980FOR WIN-PESK = 1 TO 20
+0990*
+1000  IF WTB-CODG-SITC(WIN-PESK) EQ ' '
+1010    ESCAPE TOP
+1020  END-IF
+1030*
+1040  SEPARATE WTB-CODG-SITC(WIN-PESK) INTO
+1050    WAX-CODG-SITC WAX-DESC-SITC IGNORE WITH DELIMITER ':'
+1060*
+1070  IF WAX-CODG-SITC EQ NQ06-CODG-SITC
+1080    NQ06-DESC-SITC := WAX-DESC-SITC
+1090    NQ06-CODG-RETN := 0000
+1100    NQ06-MENS-RETN := 'Operacao realizada com Sucesso'
+1110    ESCAPE MODULE
+1120  END-IF
+1130*
+1140END-FOR
+1150*
+1160COMPRESS '<' NQ06-CODG-SITC '>' INTO WAX-FILD-EDIT LEAVE NO SPACE
+1170NQ06-CODG-RETN := 0002
+1180compress '<NQ06> Codigo de Situacao nao cadastrado' wax-fild-edit
+1190  into NQ06-MENS-RETN
+1200*
+1210*
+1220END

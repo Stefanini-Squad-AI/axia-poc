@@ -1,0 +1,21 @@
+0001**C           0   *======================================================================
+0002**C           0   *<NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA>
+0003**C           0   *<NAO MEXA>
+0004**C           0   *<NAO MEXA>       O B J E T O    E M     M A N U T E N Ç Ã O
+0005**C           0   *<NAO MEXA>
+0006**C           0   *<NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA>
+0007**C           0   *----------------------------------------------------------------------
+0008**C           0   *DOCUMENTO : Projeto Nota Fiscal Eletronica
+0009**C           0   *Mantenedor: Edvilson F Silva
+0010**C           0   *Objetivo  : Estrutura de dados da rotina N9013Q06
+0011**C           0   *Data      : 07/04/2010
+0012**C           0   *======================================================================
+0013**C           0   *HISTORICO:
+0014**C           0   *----------------------------------------------------------------------
+0015**C           0   *Documento: Projeto NF-e  Mantenedor: Edvilson Silva  Data: 07/04/2010
+0016**C           0   *======================================================================
+0017**DS          0         1NQ06-LIST-PARM
+0018**DK          0   A2    2NQ06-CODG-SITC                  /*(IN ) Codigo da Situacao
+0019**DK          0   A15   2NQ06-DESC-SITC                  /*(OUT) Descrição da Situacao
+0020**DK          0   N4    2NQ06-CODG-RETN                  /*(OUT) Cod. retorno
+0021**DK          0   A79   2NQ06-MENS-RETN                  /*(OUT) Mensagem retorno

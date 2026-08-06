@@ -1,0 +1,38 @@
+0001**C           0   *======================================================================
+0002**C           0   *<NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA>
+0003**C           0   *<NAO MEXA>
+0004**C           0   *<NAO MEXA>       O B J E T O    E M     M A N U T E N Ç Ã O
+0005**C           0   *<NAO MEXA>          Documento Autorizativo: SMP-0405/2012
+0006**C           0   *<NAO MEXA>
+0007**C           0   *<NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA> <NAO MEXA>
+0008**C           0   *----------------------------------------------------------------------
+0009**C           0   *DOCUMENTO : Projeto Nota fiscal Eletronica
+0010**C           0   *Mantenedor: Edvilson F Silva
+0011**C           0   *Objetivo  : Dados Arquivo D9013142-13 (Cadastro de Simulações)
+0012**C           0   *Data      : 10/06/2010
+0013**C           0   *======================================================================
+0014**C           0   *HISTORICO:
+0015**C           0   *----------------------------------------------------------------------
+0016**C           0   *Documento: Projeto NF-e  Mantenedor: Edvilson Silva   Data: 10/06/2010
+0017**C           0   *Documento: SMP-0405/2012 Mantenedor: Edvilson Silva   Data: 08/05/2012
+0018**C           0   *======================================================================
+0019**DV          0        V1D142-13-CADS-SIMU               D9013142-13
+0020**DD          0   N2    2CODG-TIPO-DOCM-SIMU
+0021**DD          0   A1    2CODG-CATG-DOCM-SIMU
+0022**DD          0   N9    2NUMR-DOCM-SIMU
+0023**DD          0   N10   2NUMR-CONT-MATL
+0024**DR          0        R2NUMR-CONT-MATL
+0025**DFR         0   A10   3NUMR-CONT-MATL-ALFA
+0026**DD          0   N14   2NUMR-CNPJ-FORN-MATL
+0027**DD          0   N3    2NUMR-PARC-MATL
+0028**DD          0   N15,2 2VALR-DOCM-SIMU
+0029**DD          0   A2    2INDC-SITC-SIMU
+0030**DD          0   N2    2CODG-TIPO-DOCM-COBR
+0031**DR          0        R2CODG-TIPO-DOCM-COBR
+0032**DFR         0   A2    3TIPO-DOCM-COBR-ALFA
+0033**DD          0   N9    2NUMR-DOCM-COBR
+0034**DR          0        R2NUMR-DOCM-COBR
+0035**DFR         0   A9    3NUMR-DOCM-COBR-ALFA
+0036**DD          0   N8    2DATA-DOCM-COBR
+0037**DD          0   N15,2 2VALR-DOCM-COBR
+0038**DD          0   N2    2INDC-VISA-IC1
