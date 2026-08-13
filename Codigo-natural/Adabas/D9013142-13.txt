@@ -1,0 +1,60 @@
+0001 DB: 000 FILE: 142  - D9013142-13                      DEFAULT SEQUENCE:   
+0002                                                                         
+0003 T L DB Name                              F Leng  S D Remark             
+0004 - - -- --------------------------------  - ----  - - ------------------ 
+0005 *   Generation started                                                  
+0006 *   at 2012-05-08 08:56:42                                              
+0007 *   by user EDMILFO                                                     
+0008 *                                                                       
+0009 *  *                                                                    
+0010 *  * simula▒oes                                                         
+0011 *  *                                                                    
+0012   1 OW CODG-TIPO-DOCM-SIMU               N  2,0  N   tipo documento simul 
+0013 *        tipo documento simulacao                                       
+0014   1 OX CODG-CATG-DOCM-SIMU               A    1  N   categoria documento 
+0015 *        categoria documento simulacao                                  
+0016   1 OY NUMR-DOCM-SIMU                    N  9,0  N D numero documento sim 
+0017 *        numero documento simulacao                                     
+0018   1 OZ NUMR-CONT-MATL                    N 10,0  N   numero contrato mate 
+0019 *        numero contrato material                                       
+0020   1 PA NUMR-CNPJ-FORN-MATL               N 14,0  N   cnpj do fornecedor m 
+0021 *        cnpj do fornecedor material                                    
+0022   1 PB NUMR-PARC-MATL                    N  3,0  N   numero parcela mater 
+0023 *        numero parcela material                                        
+0024   1 PC VALR-DOCM-SIMU                    N 15,2  N                      
+0025   1 PD INDC-SITC-SIMU                    A    2  N                      
+0026   1 PE CODG-TIPO-DOCM-COBR               N  2,0  N                      
+0027   1 PF NUMR-DOCM-COBR                    N  9,0  N                      
+0028   1 PG DATA-DOCM-COBR                    N  8,0  N                      
+0029   1 PH VALR-DOCM-COBR                    N 15,2  N                      
+0030   1 QH GRPO-DOCM-COBR                    A   34  N D                    
+0031   1 RD INDC-VISA-IC1                     N  2,0  N                      
+0032   1 RF IDNT-NUMR-DOCM-SIMU               B   11  N S
+033 *        -------- SOURCE FIELD(S) -------                               
+0034 *        NUMR-DOCM-SIMU(1-9)                                           
+0035 *        INDC-VISA-IC1(1-2)                                            
+0036   1 QA IDNT-CONR-PARC                    A   15  N S                   
+0037 *        -------- SOURCE FIELD(S) -------                              
+0038 *        NUMR-CONT-MATL(1-10)                                          
+0039 *        NUMR-PARC-MATL(1-3)                                           
+0040 *        INDC-SITC-SIMU(1-2)                                           
+0041   1 PI IDNT-SITC-SIMU                    A   12  N S                   
+0042 *        -------- SOURCE FIELD(S) -------                              
+0043 *        INDC-SITC-SIMU(1-2)                                           
+0044 *        CODG-CATG-DOCM-SIMU(1-1)                                      
+0045 *        NUMR-DOCM-SIMU(1-9)                                           
+0046   1 PJ IDNT-FORN-SIMU                    B   23  N S                   
+0047 *        -------- SOURCE FIELD(S) -------                              
+0048 *        NUMR-CNPJ-FORN-MATL(1-14) 
+0049 *        NUMR-DOCM-SIMU(1-9)                                            
+0050   1 PK IDNT-COBR-SIMU                    B   32  N S                    
+0051 *        -------- SOURCE FIELD(S) -------                               
+0052 *        NUMR-DOCM-COBR(1-9)                                            
+0053 *        NUMR-CNPJ-FORN-MATL(1-14)                                      
+0054 *        NUMR-DOCM-SIMU(1-9)                                            
+0055   1 PL IDNT-CONR-SIMU                    A   21  N S                    
+0056 *        -------- SOURCE FIELD(S) -------                               
+0057 *        NUMR-CONT-MATL(1-10)                                           
+0058 *        INDC-SITC-SIMU(1-2)                                            
+0059 *        NUMR-DOCM-SIMU(1-9)                                            
+0060 * OPT=331                                      YY03                YYY                                                          
